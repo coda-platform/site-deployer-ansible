@@ -1,4 +1,1 @@
 ---
-
-- debug:
-    msg: "{{ ansible_role_name }}"
