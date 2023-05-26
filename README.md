@@ -1,4 +1,4 @@
-# DEPLOY-SCRIPTS
+# SITE-DEPLOYER-ANSIBLE
 
 # Local Python Virtual Environment
 
@@ -25,7 +25,7 @@ pip freeze > requirements.txt
 
 # Vagrant
 
-With Fedora NFS and Squid services will work only after doing this:
+With Fedora, NFS and Squid services will work only after doing this:
 ```
 firewall-cmd --permanent --zone=libvirt --add-service=nfs
 firewall-cmd --permanent --zone=libvirt --add-service=squid
@@ -49,7 +49,7 @@ vagrant destroy
 
 # Ansible
 
-Launch from this directory:
+Launch playbook from this directory:
 
 ```
 export ANSIBLE_CONFIG=ansible.vagrant.cfg
