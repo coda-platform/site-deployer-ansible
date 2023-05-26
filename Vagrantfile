@@ -1,0 +1,52 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "rockylinux/9"
+  config.vm.hostname = "site-deployment-vm"
+
+  config.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_version: 4
+
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.manage_guest = true
+  end
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpus = 2
+    libvirt.memory = 4096
+
+    # Create a virtio channel for use by the qemu-guest agent (time sync, snapshotting, etc)
+    libvirt.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
+
+    # Use system rather than user session
+    # For this, your user must be in the libvirt group (Fedora/CentOS)
+    libvirt.uri = 'qemu:///system'
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+
+    # If present, set yum proxy to use default gateway Squid Proxy
+    export GATEWAY=$(/sbin/ip route | awk '/default/ { print $3 }')
+
+    timeout 5 bash -c "</dev/tcp/${GATEWAY}/3128"
+    if [ $? -eq 0 ]
+    then
+       dnf config-manager --save --setopt=proxy=http://${GATEWAY}:3128 >/dev/null
+    fi
+
+    # Disable mirrorlist usage and use the default baseurl HTTP mirror. This
+    # will make sure that the squid proxy effectively cache requested packages.
+
+    sed -Ei 's/^mirrorlist=/#mirrorlist=/g'  /etc/yum.repos.d/rocky*.repo
+    sed -Ei 's/^#baseurl=/baseurl=/g'        /etc/yum.repos.d/rocky*.repo
+
+    # Update packages
+
+    dnf update -y
+
+  SHELL
+
+end

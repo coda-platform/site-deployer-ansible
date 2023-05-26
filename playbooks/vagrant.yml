@@ -1,0 +1,6 @@
+---
+
+- hosts: site-deployment-vm
+  become: true
+  roles: 
+    - site
