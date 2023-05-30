@@ -6,24 +6,40 @@ Vagrant.configure("2") do |config|
   config.vm.box = "rockylinux/9"
   config.vm.hostname = "site-deployment-vm"
 
-  config.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_version: 4
+
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
     config.hostmanager.manage_guest = true
   end
+  
 
-  config.vm.provider :libvirt do |libvirt|
-    libvirt.cpus = 2
-    libvirt.memory = 4096
+  if Vagrant::Util::Platform.windows?
+      config.vm.provider "virtualbox" do |vb|
+        vb.cpus = 2
+        vb.memory = 4096
+	  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+	  end
+    elsif Vagrant::Util::Platform.darwin?
+      config.vm.provider "virtualbox" do |vb|
+        vb.cpus = 2
+        vb.memory = 4096
+	  end
+    else
+      config.vm.provider :libvirt do |libvirt|
+        libvirt.cpus = 2
+        libvirt.memory = 4096
+	  config.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_version: 4
+	  end	
+	  
 
-    # Create a virtio channel for use by the qemu-guest agent (time sync, snapshotting, etc)
-    libvirt.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
+        # Create a virtio channel for use by the qemu-guest agent (time sync, snapshotting, etc)
+        libvirt.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
 
-    # Use system rather than user session
-    # For this, your user must be in the libvirt group (Fedora/CentOS)
-    libvirt.uri = 'qemu:///system'
+        # Use system rather than user session
+        # For this, your user must be in the libvirt group (Fedora/CentOS)
+        libvirt.uri = 'qemu:///system'
   end
 
   config.vm.provision "shell", inline: <<-SHELL
