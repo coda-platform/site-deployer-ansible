@@ -3,12 +3,10 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "rockylinux/9"
+  config.vm.box = "https://dl.rockylinux.org/vault/rocky/9.1/images/x86_64/Rocky-9-Vagrant-Vbox.latest.x86_64.box"
   config.vm.hostname = "site-deployment-vm"
 
-
-
-  if Vagrant.has_plugin?("vagrant-hostmanager")
+if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
     config.hostmanager.manage_guest = true
