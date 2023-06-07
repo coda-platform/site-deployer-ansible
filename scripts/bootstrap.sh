@@ -31,7 +31,7 @@ CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_URL=${CODA_ANSIBLE_BASE_URL}/playbooks/misc/boot
 
 # DEPLOYMENT USER PUBLIC KEY URL
 
-CODA19_DEPLOYMENT_USER_PUB_KEY_URL=https://raw.githubusercontent.com/CODA-19/deploy-scripts/master/ansible/keys/id_rsa.deployment.pub
+CODA_DEPLOYMENT_USER_PUB_KEY_URL=https://raw.githubusercontent.com/CODA-19/deploy-scripts/master/ansible/keys/id_rsa.deployment.pub
 
 #### DEFINE COLORS
 
