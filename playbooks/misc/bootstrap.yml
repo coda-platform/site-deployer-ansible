@@ -10,7 +10,7 @@
   connection: local
   gather_facts: no
   vars:
-    facts_file: /etc/ansible/facts.d/coda19.fact
+    facts_file: /etc/ansible/facts.d/coda.fact
     vault_pass_file: /etc/ansible/vault.pass
   vars_prompt:
 
@@ -30,10 +30,6 @@
       default: "{{ lookup('ini', 'proxy section=site file=' + facts_file, errors='ignore') }}"
       private: no
 
-    - prompt: "Enter this VM role [orange|green]"
-      name: _prompt_host_role
-      default: "{{ lookup('ini', 'role section=host file=' + facts_file, errors='ignore') }}"
-      private: no
 
   tasks:
 
@@ -44,9 +40,9 @@
         path: /etc/ansible/facts.d/
         state: directory
 
-    - name: INI_FILE | Add entries to /etc/ansible/facts.d/coda19.fact
+    - name: INI_FILE | Add entries to /etc/ansible/facts.d/coda.fact
       ini_file:
-        path: /etc/ansible/facts.d/coda19.fact
+        path: /etc/ansible/facts.d/coda.fact
         section: "{{ item.section }}"
         option: "{{ item.option }}"
         value: "{{ item.value }}"
@@ -57,9 +53,6 @@
         - section: site
           option: proxy
           value: "{{ _prompt_proxy }}"
-        - section: host
-          option: role
-          value: "{{ _prompt_host_role | lower }}"
 
     ###### PASSPHRASE
 
@@ -78,8 +71,9 @@
   connection: local
   gather_facts: yes
   vars:
-    _ansible_pull_repo_url: https://github.com/CODA-19/deploy-scripts.git
-    _ansible_pull_directory: /opt/coda19/deploy-scripts-pull
+    #_ansible_pull_repo_url: https://github.com/CODA-19/deploy-scripts.git
+    _ansible_pull_repo_url: https://github.com/coda-platform/site-deployer-ansible.git
+    _ansible_pull_directory: /opt/coda/deploy-scripts-pull
     _ansible_pull_log_dir: /var/log/ansible
     _ansible_pull_cron_name: "EXECUTE_ANSIBLE_PULL"
     # Interval in minutes
@@ -113,13 +107,13 @@
           export ANSIBLE_BASE=${PULL_BASE}/ansible
           export ANSIBLE_ROLES_PATH=${ANSIBLE_BASE}/roles
 
-          {% if ansible_local.coda19.site.proxy is defined and ansible_local.coda19.site.proxy|length > 0 %}
+          {% if ansible_local.coda.site.proxy is defined and ansible_local.coda.site.proxy|length > 0 %}
           #### Export proxy, as defined in localfacts while bootstraping.
           #### We're doing this here to overcome the chicken-egg problem.
           #### Configured settings in /etc/profile.d/proxy.sh will take precedence.
 
           if [[ ! -f /etc/profile.d/proxy.sh ]]; then
-            export PROXY={{ ansible_local.coda19.site.proxy }}
+            export PROXY={{ ansible_local.coda.site.proxy }}
             export HTTPS_PROXY=$PROXY
             export HTTP_PROXY=$PROXY
             export https_proxy=$PROXY
@@ -161,15 +155,15 @@
     # Mark this host as bootstraping, this marker is deleted at the end of the
     # main playbooks.
 
-    - name: FILE | Ensure /etc/coda19 folder exists
+    - name: FILE | Ensure /etc/coda folder exists
       file:
-        path: /etc/coda19
+        path: /etc/coda
         state: directory
         mode: 0750
         owner: root
         group: wheel
 
-    - name: FILE | Add file /etc/coda19/bootstrapping
+    - name: FILE | Add file /etc/coda/bootstrapping
       file:
-        path: /etc/coda19/bootstrapping
+        path: /etc/coda/bootstrapping
         state: touch
