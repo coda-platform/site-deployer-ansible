@@ -104,8 +104,8 @@
           #### Parameters
 
           export PULL_BASE={{ _ansible_pull_directory }}
-          export ANSIBLE_BASE=${PULL_BASE}/ansible
-          export ANSIBLE_ROLES_PATH=${ANSIBLE_BASE}/roles
+          #export ANSIBLE_BASE=${PULL_BASE}/ansible
+          export ANSIBLE_ROLES_PATH=${PULL_BASE}/roles
 
           {% if ansible_local.coda.site.proxy is defined and ansible_local.coda.site.proxy|length > 0 %}
           #### Export proxy, as defined in localfacts while bootstraping.
@@ -140,8 +140,8 @@
               --url {{ _ansible_pull_repo_url }} \
               --vault-password-file /etc/ansible/vault.pass \
               --directory ${PULL_BASE} \
-              --inventory ${ANSIBLE_BASE}/hosts.localhost \
-              ${ANSIBLE_BASE}/playbooks/localhost.yml
+              --inventory ${PULL_BASE}/hosts.localhost \
+              ${PULL_BASE}/playbooks/localhost.yml
 
           ) 200>/var/lock/execute-ansible-pull.lock
 
