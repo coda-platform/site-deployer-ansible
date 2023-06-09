@@ -1,8 +1,130 @@
----
+#---
 
-- hosts: localhost
+#- hosts: localhost
+#  connection: local
+#  become: true
+#  gather_facts: true
+#  roles: 
+#    - site
+    
+    
+
+---
+#
+# MAIN PLAYBOOK FOR LOCAL DEPLOYMENT MODE / ANSIBLE-PULL
+#
+# How to invoke on localhost, use something like this:
+#
+#   env-ansible
+#   ansible-playbook \
+#     --inventory localhost, \
+#     --vault-password-file /etc/ansible/vault.pass \
+#     playbooks/localhost.yml
+#
+# To run correctly, this playbook minimaly need these localfacts:
+#
+#   - ansible_local.coda19.site.id
+#   - ansible_local.coda19.node.role
+#
+#   Those are needed to correctly load corresponding vars, vaults and which
+#   meta role to load (eg: _green, _orange, etc.). They are initialized when
+#   running the boostrap procedure.
+#
+#   To get more information about localfacts and file locations, see docs:
+#   https://docs.ansible.com/ansible/latest/user_guide/playbooks_vars_facts.html#facts-d-or-local-facts
+#
+# Then other facts can (or should) come from:
+#
+#   - Site vault, in file vaults/vault.<site id>
+#   - Site group vars, in file group_vars/s<site id>
+#
+# Storing some facts in vaults and in group_vars is very useful becase we can ensure
+# that they are centrally, properly managed and used independently the deployment
+# strategy, being either:
+#
+#   - locally using ansible pull (this localhost playbook)
+#   - remotely using traditionnal push over ssh (remote playbooks)
+#
+
+- name: Deploy the current box based on local facts (coda.host.role)
+  hosts: localhost
   connection: local
-  become: true
-  gather_facts: true
-  roles: 
-    - site
+  environment:
+    http_proxy:  "{{ _common_global_proxy   | default('') }}"
+    https_proxy: "{{ _common_global_proxy   | default('') }}"
+    no_proxy:    "{{ _common_global_noproxy | default('') }}"
+    HTTP_PROXY:  "{{ _common_global_proxy   | default('') }}"
+    HTTPS_PROXY: "{{ _common_global_proxy   | default('') }}"
+    NO_PROXY:    "{{ _common_global_noproxy | default('') }}"
+
+  vars_files:
+
+    # NOTE: This file list must be identical for all playbooks: localhost.yml, remote-orange.yml, remote-green.yml
+    - "{{ playbook_dir }}/../group_vars/all"
+    - "{{ playbook_dir }}/../group_vars/{{ ansible_local.coda.site.id }}"
+    - "{{ playbook_dir }}/../vaults/vault.{{ ansible_local.coda.site.id }}"
+
+  pre_tasks:
+
+    - name: DEBUG | Show local facts
+      debug:
+        var: ansible_local
+      tags:
+        - always
+
+    # Provision global facts from local ones, those one should be loaded from regular mecanism (inventory)
+    # when running in remote mode.
+    #
+    # Some tasks across the project must refer to these standard vars, being executed
+    # in local or remote mode.
+
+    #- name: SET_FACT | Set coda_* facts from local ones
+    #  set_fact:
+    #    coda_site_id:   "{{ ansible_local.coda.site.id   | lower }}"
+    #    coda_host_role: "{{ ansible_local.coda.host.role | lower }}"
+    #  tags:
+    #    - always
+
+    # Try to load specific vars for this node role (orange|green).
+
+    #- name: INCLUDE_VARS | Node's role specific vars
+    #  include_vars: "{{ item }}"
+    #  failed_when: false
+    #  loop:
+    #    - "{{ playbook_dir }}/../group_vars/{{ coda_site_id }}.{{ coda_host_role | lower }}"
+    #    - "{{ playbook_dir }}/../vaults/vault.{{ coda_site_id }}.{{ coda_host_role | lower }}"
+    #  tags:
+    #    - always
+
+  tasks:
+
+    # _oneoff are "shoot once" tasks that takes place prior any orange|green
+    # tasks.
+    # They can be disabled/enabled on per site basis (default is disabled), see group_vars
+
+    #- name: INCLUDE_ROLE | _ONEOFFS
+    #  include_role:
+    #    name: _oneoffs
+    #  tags:
+    #    - always
+
+    #- name: INCLUDE_ROLE | _ORANGE
+    #  include_role:
+    #    name: _orange
+    #  when: coda19_host_role == "orange"
+    #  tags:
+    #    - always
+
+    #- name: INCLUDE_ROLE | _GREEN
+    #  include_role:
+    #    name: _green
+    #  when: coda19_host_role == "green"
+    #  tags:
+    #    - always
+
+    #- name: FILE | Remove file /etc/coda19/boostrapping
+    #  file:
+    #    path: /etc/coda19/bootstrapping
+    #    state: absent
+    #  tags:
+    #    - always

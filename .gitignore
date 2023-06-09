@@ -1,2 +1,8 @@
-.venv
 .vagrant
+become.pass
+become.pass.*
+vault.pass
+vault.*.pass
+heartbeat-token.*
+venv/
+.venv

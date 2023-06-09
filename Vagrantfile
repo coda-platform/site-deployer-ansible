@@ -13,7 +13,8 @@ Vagrant.configure("2") do |config|
   end
 
   if Vagrant::Util::Platform.windows?
-    config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+    config.vm.synced_folder ".", "/vagrant", type: "virtualbox",
+      mount_options: ["dmode=774,fmode=774"]   
 
     config.vm.provider "virtualbox" do |vb|
         vb.cpus = 2
