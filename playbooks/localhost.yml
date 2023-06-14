@@ -78,23 +78,20 @@
     # Some tasks across the project must refer to these standard vars, being executed
     # in local or remote mode.
 
-    #- name: SET_FACT | Set coda_* facts from local ones
-    #  set_fact:
-    #    coda_site_id:   "{{ ansible_local.coda.site.id   | lower }}"
-    #    coda_host_role: "{{ ansible_local.coda.host.role | lower }}"
-    #  tags:
-    #    - always
+    - name: SET_FACT | Set coda_* facts from local ones
+      set_fact:
+        coda_site_id:   "{{ ansible_local.coda.site.id   | lower }}"
+      tags:
+        - always
 
-    # Try to load specific vars for this node role (orange|green).
-
-    #- name: INCLUDE_VARS | Node's role specific vars
-    #  include_vars: "{{ item }}"
-    #  failed_when: false
-    #  loop:
-    #    - "{{ playbook_dir }}/../group_vars/{{ coda_site_id }}.{{ coda_host_role | lower }}"
-    #    - "{{ playbook_dir }}/../vaults/vault.{{ coda_site_id }}.{{ coda_host_role | lower }}"
-    #  tags:
-    #    - always
+    - name: INCLUDE_VARS | Node's specific vars
+      include_vars: "{{ item }}"
+      failed_when: false
+      loop:
+        - "{{ playbook_dir }}/../group_vars/{{ coda_site_id }}"
+        - "{{ playbook_dir }}/../vaults/vault.{{ coda_site_id }}"
+      tags:
+        - always
 
   tasks:
 
@@ -102,18 +99,17 @@
     # tasks.
     # They can be disabled/enabled on per site basis (default is disabled), see group_vars
 
-    #- name: INCLUDE_ROLE | _ONEOFFS
-    #  include_role:
-    #    name: _oneoffs
-    #  tags:
-    #    - always
+    - name: INCLUDE_ROLE | CODA_ONEOFFS
+      include_role:
+        name: coda_oneoffs
+      tags:
+        - always
 
-    #- name: INCLUDE_ROLE | _ORANGE
-    #  include_role:
-    #    name: _orange
-    #  when: coda19_host_role == "orange"
-    #  tags:
-    #    - always
+    - name: INCLUDE_ROLE | SITE
+      include_role:
+        name: site
+      tags:
+        - always
 
     #- name: INCLUDE_ROLE | _GREEN
     #  include_role:
