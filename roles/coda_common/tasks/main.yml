@@ -20,11 +20,11 @@
     - _common
     - _common_proxy
 
-# - name: "IMPORT_TASKS | repositories.yml"
-#   import_tasks: repositories.yml
-#   tags:
-#     - _common
-#     - _common_repositories
+- name: "IMPORT_TASKS | repositories.yml"
+  import_tasks: repositories.yml
+  tags:
+    - _common
+    - _common_repositories
 
 # - name: "IMPORT_TASKS | packages.yml"
 #   import_tasks: packages.yml
