@@ -26,11 +26,11 @@
     - _common
     - _common_repositories
 
-# - name: "IMPORT_TASKS | packages.yml"
-#   import_tasks: packages.yml
-#   tags:
-#     - _common
-#     - _common_packages
+- name: "IMPORT_TASKS | packages.yml"
+  import_tasks: packages.yml
+  tags:
+    - _common
+    - _common_packages
 
 # - name: "IMPORT_TASKS | ansible.yml"
 #   import_tasks: ansible.yml
