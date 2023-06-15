@@ -1,0 +1,17 @@
+---
+
+- name: YUM | Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: YUM | Install fail2ban
+  yum:
+    name: fail2ban
+    state: present
+
+- name: SYSTEMD | Ensure fail2ban is enabled and started
+  systemd:
+    name: fail2ban
+    state: started
+    enabled: yes
