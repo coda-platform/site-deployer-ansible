@@ -106,7 +106,6 @@ SYSINFO=$( mktemp )
   header "DISK SPACE"
   df -h
 
-#{% if coda_host_role == 'orange' %}
 
   header "AIDBOXDB.SERVICE STATUS AND LOGS"
   systemctl  status aidboxdb --full --lines=0
@@ -131,7 +130,6 @@ SYSINFO=$( mktemp )
   echo
   journalctl --unit=orthanc --full --lines=25 --no-pager --boot
 
-#{% elif coda19_host_role == 'green' %}
 
   header "CODA19-SITE-API.SERVICE STATUS AND LOGS"
   systemctl  status coda19-site-api  --full --lines=0
@@ -148,7 +146,6 @@ SYSINFO=$( mktemp )
   echo
   journalctl --unit=coda19-learning-api  --full --lines=50 --no-pager --boot
 
-#{% endif %}
 
 } >> ${SYSINFO}
 
