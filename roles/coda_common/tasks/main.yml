@@ -44,11 +44,11 @@
     - _common
     - _common_heartbeat
 
-# - name: "IMPORT_TASKS | accounts.yml"
-#   import_tasks: accounts.yml
-#   tags:
-#     - _common
-#     - _common_accounts
+- name: "IMPORT_TASKS | accounts.yml"
+  import_tasks: accounts.yml
+  tags:
+    - _common
+    - _common_accounts
 
 # - name: "IMPORT_TASKS | sshd.yml"
 #   import_tasks: sshd.yml
