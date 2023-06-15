@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+#
+# {{ ansible_managed }}
+#
+
+################################################################################
+###### LOAD REQUIRED ENVIRONMENT STUFF
+################################################################################
+
+[ -f /etc/profile.d/proxy.sh       ] && source /etc/profile.d/proxy.sh
+[ -f /etc/profile.d/env-ansible.sh ] && source /etc/profile.d/env-ansible.sh && env-ansible
+
+################################################################################
+###### DEFINING SCRIPT VARIABLES AND PARAMETERS
+################################################################################
+
+# Global
+
+CODA_SITE_ID={{ coda_site_id }}
+CODA_HOST_ROLE="green" #Devraisje mettre site
+
+CODA_HEARTBEAT_BASE_URL={{ _common_heartbeat_base_url }}
+CODA_HEARTBEAT_TOKEN=$( cat /etc/coda/heartbeat-token )
+CODA_HEARTBEAT_ENABLED={{ (not _common_heartbeat_disabled) | ternary('1', '0') }}
+
+CODA_CURL_CONNECT_TIMEOUT={{ _common_curl_connect_timeout }}
+CODA_CURL_MAX_TIME={{ _common_curl_max_time }}
+
+# Script specifics
+
+PULL_BASE={{ _common_ansible_pull_directory }}
+ANSIBLE_BASE=${PULL_BASE}/ansible
+ANSIBLE_LOG_DIR={{ _common_ansible_pull_log_dir }}
+
+# ANSIBLE_ROLES_PATH must be exported to be visible by ansible-pull command
+
+export ANSIBLE_ROLES_PATH=${ANSIBLE_BASE}/roles
+
+################################################################################
+###### EXECUTE ANSIBLE-PULL
+################################################################################
+
+# Disable python output buffering
+
+export PYTHONUNBUFFERED=1
+
+# Ensure logging directory is there with good privileges
+mkdir -p ${ANSIBLE_LOG_DIR}
+chmod go-rwx ${ANSIBLE_LOG_DIR}
+
+# This part should not execute in parallel
+(
+  # If already running: dont continue and exit
+  flock -n 200 || exit 1
+
+  # Determine log file
+  ANSIBLE_LOG_FILE=${ANSIBLE_LOG_DIR}/ansible-pull-$( date +%Y%m%d-%H%M%S ).log
+
+  # Fire!
+  ansible-pull \
+    --url {{ _common_ansible_pull_repo_url }} \
+    #--checkout {{ _common_ansible_pull_repo_branch[coda_host_role] | default("master") }} \ #Il n'y a plus de host role donc on doit avoir a changer l'adresse aussi
+    --vault-password-file /etc/ansible/vault.pass \
+    --directory ${PULL_BASE} \
+    --inventory ${ANSIBLE_BASE}/hosts.localhost \
+    ${ANSIBLE_BASE}/playbooks/localhost.yml \
+        | tee ${ANSIBLE_LOG_FILE}
+
+  # Simply add a timestamp at the end
+  echo ""
+  echo "Return code: $?"
+  echo "Finished at: $( date --iso-8601=seconds )" >> ${ANSIBLE_LOG_FILE}
+
+  # Push log to heartbeat service
+
+  if [ $CODA_HEARTBEAT_ENABLED -eq 1 ]
+  then
+    curl \
+      --silent \
+      --connect-timeout ${CODA_CURL_CONNECT_TIMEOUT} \
+      --max-time ${CODA_CURL_MAX_TIME} \
+      --request POST \
+      --header "Authorization: ${CODA_HEARTBEAT_TOKEN}" \
+      --header "Content-Type: text/plain" \
+      --data-binary @${ANSIBLE_LOG_FILE} \
+      ${CODA_HEARTBEAT_BASE_URL}/logs/${CODA_SITE_ID}/${CODA_HOST_ROLE}/ansible
+  fi
+
+) 200>/var/lock/execute-ansible-pull.lock
+
+################################################################################
+###### CLEANUP LOG FILES OLDER THAN 7 DAYS
+################################################################################
+
+find ${ANSIBLE_LOG_DIR}/ansible-pull-* -mtime +7 -exec rm {} \; &>/dev/null
