@@ -74,23 +74,23 @@
     - _common
     - _common_ntp
 
-# - name: "IMPORT_TASKS | vmtools.yml"
-#   import_tasks: vmtools.yml
-#   tags:
-#     - _common
-#     - _common_vmtools
+- name: "IMPORT_TASKS | vmtools.yml"
+  import_tasks: vmtools.yml
+  tags:
+    - _common
+    - _common_vmtools
 
-# - name: "IMPORT_TASKS | firewall.yml"
-#   import_tasks: firewall.yml
-#   tags:
-#     - _common
-#     - _common_firewall
+- name: "IMPORT_TASKS | firewall.yml"
+  import_tasks: firewall.yml
+  tags:
+    - _common
+    - _common_firewall
 
-# - name: "IMPORT_TASKS | selinux.yml"
-#   import_tasks: selinux.yml
-#   tags:
-#     - _common
-#     - _common_selinux
+- name: "IMPORT_TASKS | selinux.yml"
+  import_tasks: selinux.yml
+  tags:
+    - _common
+    - _common_selinux
 
 # - name: "IMPORT_TASKS | postfix.yml"
 #   import_tasks: postfix.yml

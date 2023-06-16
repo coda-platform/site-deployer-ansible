@@ -1,0 +1,74 @@
+---
+
+### Option 1: fetch and extract
+
+#- name: "GET_URL | Download node-exporter"
+#  get_url:
+#    url: "{{ _common_node_exporter_url }}"
+#    dest: /tmp/node_exporter.tar.gz
+#  when: _common_node_exporter_url is defined
+#
+#- name: "COMMAND | Extract node_exporter to /usr/local/bin/node_exporter"
+#  command: |
+#    tar -xvf /tmp/node_exporter.tar.gz -C /usr/local/bin --strip-components 1 --wildcards */node_exporter
+#  args:
+#    creates: /usr/local/bin/node_exporter
+
+### Option 2: copy from driver to remote
+
+- name: COPY | Copy node exporter binary
+  copy:
+    src: files/softwares/node_exporter
+    dest: /usr/local/bin/node_exporter
+    mode: 0755
+  notify: restart node_exporter
+
+###
+
+- name: "USER | Add prometheus user"
+  user:
+    name: prometheus
+    system: yes
+    shell: /sbin/nologin
+    home: /var/lib/prometheus
+
+- name: "FILE | Create node_exporter collector.textfile directory ({{ _common_node_exporter_collector_textfile_dir }})"
+  file:
+    path: "{{ _common_node_exporter_collector_textfile_dir }}"
+    state: directory
+    mode: 0755
+
+- name: "TEMPLATE | Configure node_exporter (/etc/default/node_exporter)"
+  template:
+    src: etc/default/node_exporter.j2
+    dest: /etc/default/node_exporter
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart node_exporter
+
+- name: "COPY | Create service unit-file"
+  template:
+    src: etc/systemd/system/node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+  notify: restart node_exporter
+
+- name: "SYSTEMD | Ensure node_exporter is started and enabled"
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+# export machine-id for debuging purposes...
+
+- name: "SLURP | /etc/machine-id"
+  slurp:
+    src: /etc/machine-id
+  register: _machine_id
+
+- name: "COPY | Set {{ _common_node_exporter_collector_textfile_dir }}/machine-id.prom"
+  copy:
+    dest: "{{ _common_node_exporter_collector_textfile_dir }}/machine-id.prom"
+    content: |
+      systemd_machine_id{id="{{ _machine_id.content | b64decode | trim }}"} 1
