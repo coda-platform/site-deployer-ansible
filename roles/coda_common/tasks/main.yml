@@ -92,38 +92,38 @@
     - _common
     - _common_selinux
 
-# - name: "IMPORT_TASKS | postfix.yml"
-#   import_tasks: postfix.yml
-#   tags:
-#     - _common
-#     - _common_postfix
+- name: "IMPORT_TASKS | postfix.yml"
+  import_tasks: postfix.yml
+  tags:
+    - _common
+    - _common_postfix
 
-# - name: "IMPORT_TASKS | node_exporter.yml"
-#   import_tasks: node_exporter.yml
-#   tags:
-#     - _common
-#     - _common_node_exporter
+- name: "IMPORT_TASKS | node_exporter.yml"
+  import_tasks: node_exporter.yml
+  tags:
+    - _common
+    - _common_node_exporter
 
-# - name: "IMPORT_TASKS | logrotate.yml"
-#   import_tasks: logrotate.yml
-#   tags:
-#     - _common
-#     - _common_logrotate
+- name: "IMPORT_TASKS | logrotate.yml"
+  import_tasks: logrotate.yml
+  tags:
+    - _common
+    - _common_logrotate
 
-# - name: "IMPORT_TASKS | swap.yml"
-#   import_tasks: swap.yml
-#   tags:
-#     - _common
-#     - _common_swap
+- name: "IMPORT_TASKS | swap.yml"
+  import_tasks: swap.yml
+  tags:
+    - _common
+    - _common_swap
 
-# - name: "IMPORT_TASKS | system-upgrade.yml"
-#   import_tasks: system-upgrade.yml
-#   tags:
-#     - _common
-#     - _common_system_upgrade
+- name: "IMPORT_TASKS | system-upgrade.yml"
+  import_tasks: system-upgrade.yml
+  tags:
+    - _common
+    - _common_system_upgrade
 
-# - name: "IMPORT_TASKS | reboot.yml"
-#   import_tasks: reboot.yml
-#   tags:
-#     - _common
-#     - _common_reboot    
+- name: "IMPORT_TASKS | reboot.yml"
+  import_tasks: reboot.yml
+  tags:
+    - _common
+    - _common_reboot    

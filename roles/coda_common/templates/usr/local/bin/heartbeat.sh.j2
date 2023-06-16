@@ -131,20 +131,20 @@ SYSINFO=$( mktemp )
   journalctl --unit=orthanc --full --lines=25 --no-pager --boot
 
 
-  header "CODA19-SITE-API.SERVICE STATUS AND LOGS"
-  systemctl  status coda19-site-api  --full --lines=0
+  header "CODA-SITE-API.SERVICE STATUS AND LOGS"
+  systemctl  status coda-site-api  --full --lines=0
   echo
-  journalctl --unit=coda19-site-api  --full --lines=50 --no-pager --boot
+  journalctl --unit=coda-site-api  --full --lines=50 --no-pager --boot
 
-  header "CODA19-STATS-API.SERVICE STATUS AND LOGS"
-  systemctl  status coda19-stats-api  --full --lines=0
+  header "CODA-STATS-API.SERVICE STATUS AND LOGS"
+  systemctl  status coda-stats-api  --full --lines=0
   echo
-  journalctl --unit=coda19-stats-api  --full --lines=50 --no-pager --boot
+  journalctl --unit=coda-stats-api  --full --lines=50 --no-pager --boot
 
-  header "CODA19-LEARNING-API.SERVICE STATUS AND LOGS"
-  systemctl  status coda19-learning-api  --full --lines=0
+  header "CODA-LEARNING-API.SERVICE STATUS AND LOGS"
+  systemctl  status coda-learning-api  --full --lines=0
   echo
-  journalctl --unit=coda19-learning-api  --full --lines=50 --no-pager --boot
+  journalctl --unit=coda-learning-api  --full --lines=50 --no-pager --boot
 
 
 } >> ${SYSINFO}

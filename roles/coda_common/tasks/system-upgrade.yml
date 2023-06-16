@@ -1,0 +1,27 @@
+---
+
+- when:
+    - _common_system_upgrade_tag is defined
+    - _common_system_upgrade_tag | string | length > 0
+  block:
+
+      - name: SLURP | /etc/coda/system-upgrade
+        slurp:
+          src: /etc/coda/system-upgrade
+        register: _slurp
+        ignore_errors: yes
+
+      - when: _slurp.failed or _slurp['content'] | b64decode | string != _common_system_upgrade_tag | string
+        block:
+
+          - name: YUM | Update all packages to latest
+            yum:
+              name: "*"
+              state: latest
+              update_cache: yes
+            register: _yum
+
+          - name: COPY | Mark this update as done
+            copy:
+              dest: /etc/coda/system-upgrade
+              content: "{{ _common_system_upgrade_tag }}"
