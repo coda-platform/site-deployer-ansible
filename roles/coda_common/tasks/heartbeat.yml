@@ -1,0 +1,66 @@
+---
+
+###### Add prockiller
+
+- name: TEMPLATE | Generate /usr/local/bin/prockiller.sh
+  template:
+    src: usr/local/bin/prockiller.sh
+    dest: /usr/local/bin/prockiller.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: CRON | Create cronjob to execute the heartbeat process
+  cron:
+    name: CODA_PROCKILLER
+    minute: "*/5"
+    job: /usr/local/bin/prockiller.sh >/dev/null 2>/dev/null
+    cron_file: coda
+    user: root
+
+###### COMMON HEARTBEAT STUFF
+
+- name: COPY | Save hearbeat token into /etc/coda/heartbeat-token
+  copy:
+    dest: /etc/coda/heartbeat-token
+    content: "{{ _common_heartbeat_token }}"
+    mode: 0640
+    owner: root
+    group: wheel
+
+###### HEARTBEAT - MAIN SCRIPT
+
+- name: TEMPLATE | Generate /usr/local/bin/heartbeat.sh
+  template:
+    src: usr/local/bin/heartbeat.sh.j2
+    dest: /usr/local/bin/heartbeat.sh
+    mode: 0750
+
+- name: CRON | Create cronjob to execute the heartbeat process
+  cron:
+    name: CODA_HEARTBEAT
+    minute: "*/{{ _common_heartbeat_interval }}"
+    job: /usr/local/bin/heartbeat.sh >/dev/null
+    cron_file: coda
+    user: root
+    disabled: "{{ _common_heartbeat_disabled | default(omit) }}"
+
+###### HEARTBEAT - METRICS PUSHER
+
+- name: TEMPLATE | Generate /usr/local/bin/heartbeat-metrics.sh
+  template:
+    src: usr/local/bin/heartbeat-metrics.sh.j2
+    dest: /usr/local/bin/heartbeat-metrics.sh
+    mode: 0750
+  notify:
+    # We need to notify because heatbeat-metrics run in a loop once launched
+    - kill heartbeat-metrics
+
+- name: CRON | Create cronjob to execute the heartbeat-metrics process
+  cron:
+    name: CODA_HEARTBEAT_METRICS
+    minute: "*/{{ _common_heartbeat_interval }}"
+    job: /usr/local/bin/heartbeat-metrics.sh >/dev/null 2>/dev/null
+    cron_file: coda
+    user: root
+    disabled: "{{ _common_heartbeat_disabled | default(omit) }}"

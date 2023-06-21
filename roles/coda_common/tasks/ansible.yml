@@ -1,0 +1,85 @@
+---
+
+###### SOME CLEANUP
+
+- name: FILE | Remove old implementation venv
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/coda/ansible-requirements-automatic.txt
+    - /opt/coda/venv-ansible-2022a
+
+###### ANSIBLE VENV - AUTOMATIC IMPLEMENTATION
+
+- name: "VENV | COPY | requirements.txt -> /opt/coda/ansible-requirements.txt"
+  copy:
+    src: "{{ playbook_dir }}/../requirements.txt"
+    dest: /opt/coda/ansible-requirements.txt
+
+- name: "VENV | STAT | /opt/coda/ansible-requirements.txt"
+  stat:
+    path: /opt/coda/ansible-requirements.txt
+    checksum_algorithm: md5
+  register: _stat
+
+- name: "VENV | SET_FACT | _venv_path"
+  set_fact:
+    # be safe: md5 hash of the file; this will be removed in Ansible 2.9 in favor of the checksum return value
+    # see: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/stat_module.html
+    _venv_path: "/opt/coda/venv-ansible"
+    #_venv_path: "/opt/coda/venv-ansible-{{ _stat.stat.checksum | default(_stat.stat.md5) }}" #J'ai du modifier le path mais je comprends pas pourquoi c'était comme ca FM
+
+- name: "VENV | DEBUG | _venv_path"
+  debug:
+    var: _venv_path
+
+- name: "VENV | PIP | {{ _venv_path }} - Ensure we have latest pip, setuptools and wheel"
+  pip:
+    virtualenv: "{{ _venv_path }}"
+    virtualenv_python: /usr/bin/python3
+    name:
+      - pip
+      - setuptools
+      - wheel
+    state: latest
+
+- name: "VENV | PIP | {{ _venv_path }} - Install requirements"
+  pip:
+    virtualenv: "{{ _venv_path }}"
+    requirements: /opt/coda/ansible-requirements.txt
+
+# if we're here, it's that we have a working venv with installed dependencies successfully
+- name: "VENV | SET_FACT | Set _common_ansible_venv_path to {{ _venv_path }}"
+  set_fact:
+    _common_ansible_venv_path: "{{ _venv_path }}"
+
+###### ANSIBLE-ACTIVATORS
+
+- name: TEMPLATE | Generate activators - /etc/profile.d/env-ansible.sh
+  template:
+    src: etc/profile.d/env-ansible.sh.j2
+    dest: /etc/profile.d/env-ansible.sh
+    mode: 0744
+
+- name: FILE | Remove /usr/local/bin/env-ansible.sh
+  file:
+    path: /usr/local/bin/env-ansible.sh
+    state: absent
+
+###### ANSIBLE-PULL
+
+- name: TEMPLATE | Generate /usr/local/bin/execute-ansible-pull.sh
+  template:
+    src: usr/local/bin/execute-ansible-pull.sh.j2
+    dest: /usr/local/bin/execute-ansible-pull.sh
+    mode: 0750
+
+- name: CRON | Create ansible-pull cron job
+  cron:
+    name: "{{ _common_ansible_pull_cron_name }}"
+    job: /usr/local/bin/execute-ansible-pull.sh >/dev/null
+    minute: "*/{{ _common_ansible_pull_cron_interval }}"
+    user: root
+    disabled: "{{ _common_ansible_pull_disabled | bool }}"
+

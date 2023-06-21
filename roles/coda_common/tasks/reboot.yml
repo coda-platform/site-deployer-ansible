@@ -1,0 +1,26 @@
+---
+
+- when:
+    - _common_reboot_tag is defined
+    - _common_reboot_tag | string | length > 0
+  block:
+
+      - name: SLURP | /etc/coda/reboot content
+        slurp:
+          src: /etc/coda/reboot
+        register: _slurp
+        ignore_errors: yes
+
+      - when: _slurp.failed or _slurp['content'] | b64decode | string != _common_reboot_tag | string
+        block:
+
+            - name: COPY | Mark this reboot as done
+              copy:
+                dest: /etc/coda/reboot
+                content: "{{ _common_reboot_tag }}"
+
+            - name: COMMAND | systemctl reboot
+              command:  systemctl reboot
+              ignore_errors: yes
+
+            - meta: end_play

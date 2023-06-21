@@ -1,0 +1,31 @@
+---
+
+##### Manage deployment user
+
+# TODO
+
+##### Add local user accounts
+
+- name: "USER | Add users"
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | default(omit) }}"
+    state: present
+    password: "{{ item.password | default(omit) }}"
+  with_items: "{{ _common_accounts }}"
+
+- name: "AUTHORIZED_KEY | Add users pubkey when provided"
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.pubkey }}"
+    state: present
+  when: item.pubkey is defined
+  with_items: "{{ _common_accounts }}"
+
+##### Manage rescue account
+
+# TODO
+
+##### Change root password
+
+# TODO

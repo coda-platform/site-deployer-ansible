@@ -1,0 +1,84 @@
+---
+
+- name: "SYSTEMD | Ensure firewalld is enabled and started"
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+###### Add zones
+
+- name: "FIREWALLD | Add local-red zone"
+  firewalld:
+    zone: local-red
+    state: present
+    permanent: yes
+  register: _fw_local_red
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+- name: "FIREWALLD | Add local-orange zone"
+  firewalld:
+    zone: local-orange
+    state: present
+    permanent: yes
+  register: _fw_local_orange
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+- name: "FIREWALLD | Add local-green zone"
+  firewalld:
+    zone: local-green
+    state: present
+    permanent: yes
+  register: _fw_local_green
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+- name: "FIREWALLD | Reload if new zones added"
+  systemd:
+    name: firewalld
+    state: reloaded
+  when: _fw_local_red.changed or _fw_local_orange.changed or _fw_local_green.changed
+
+###### Manage zones sources
+
+- name: "FIREWALLD | Manage local zones sources"
+  firewalld:
+    zone: "{{ item.zone }}"
+    source: "{{ item.source }}"
+    state: "{{ item.state | default('enabled') }}"
+    permanent: yes
+    immediate: yes
+  with_items: "{{ _common_local_firewalld_zones_sources }}"
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+
+# all services are allowed from trusted zone only (i.e. can only SSH via well-known trusted SSH jumphosts)
+- name: "FIREWALLD | Manage trusted sources"
+  firewalld:
+    zone: trusted
+    source: "{{ item.source }}"
+    state: "{{ item.state | default('enabled') }}"
+    permanent: yes
+    immediate: yes
+  with_items: "{{ _common_trusted_firewalld_zones_sources }}"
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+
+# Remove the ssh service from the public zone, at this point only the
+# trust zone can access the machine. If no trust zone are defined,
+# leave the public zone untouched.
+
+- name: "FIREWALLD | Disable ssh from the public zone"
+  firewalld:
+    zone: public
+    service: ssh
+    permanent: yes
+    immediate: yes
+    state: disabled
+  when: _common_trusted_firewalld_zones_sources | length > 0
+  vars:
+    ansible_python_interpreter: /bin/python3

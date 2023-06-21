@@ -1,0 +1,17 @@
+---
+
+- name: FILE | Ensure /etc/coda folder exists
+  file:
+    path: /etc/coda
+    state: directory
+    mode: 0750
+    owner: root
+    group: wheel
+
+- name: FILE | Create /var/lib/coda
+  file:
+    path: /var/lib/coda
+    mode: 0775
+    owner: root
+    group: root
+    state: directory

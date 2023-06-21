@@ -1,5 +1,5 @@
 ---
 dependencies:
   - role: coda_common
-  - role: coda_aidbox
-  - role: coda_orthanc
+#  - role: coda_aidbox
+#  - role: coda_orthanc

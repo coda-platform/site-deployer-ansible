@@ -1,0 +1,47 @@
+---
+
+######
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+######
+
+- name: restart chronyd
+  systemd:
+    name: chronyd
+    state: restarted
+    enabled: yes
+
+######
+
+- name: restart sshd
+  systemd:
+    name: sshd
+    state: restarted
+
+- name: reload sshd
+  systemd:
+    name: sshd
+    state: reloaded
+
+######
+
+- name: restart node_exporter
+  service:
+    name: node_exporter
+    state: restarted
+    daemon_reload: yes
+
+######
+
+- name: reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+
+######
+
+- name: kill heartbeat-metrics
+  command: /usr/bin/pkill -f heartbeat-metrics.sh
+  ignore_errors: yes

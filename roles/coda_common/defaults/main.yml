@@ -1,1 +1,181 @@
 ---
+# Those values can be overriden within a group_vars file or
+# inside vault files. If specified at both places, what is
+# specified in the vault file takes priority over what is
+# defined in the group_vars file.
+
+###### ACCOUNTS TO AUTOMATICALLY ADD
+
+_common_accounts: []
+
+###### NTP
+
+_common_ntp_servers:
+  - time.nrc.ca
+  - time.chu.nrc.ca
+  - ntp.ovh.net
+
+###### SMTP
+
+_common_smtp_server: ""
+
+###### PROXY
+
+# Proxies, when provied are enabled by default.
+# Even if enabled flag returns true, you must define a value
+# to make it truely enabled.
+
+_common_global_proxy_enabled: yes
+_common_global_proxy: ""
+_common_global_noproxy: 127.0.0.1,localhost
+
+_common_yum_proxy_enabled: yes
+_common_yum_proxy: "{{ _common_global_proxy }}"
+
+###### FIREWALL
+_common_local_firewalld_zones_sources: []
+
+# If defined, ssh will be only allowed from those networks/hosts
+_common_trusted_firewalld_zones_sources: []
+
+###### CURL SETTINGS
+
+# Maximum time in seconds that we allow curl's connection to take. This only
+# limits the connection phase, so if curl connects within the given period it
+# will continue - if not it will exit.
+
+_common_curl_connect_timeout: 5
+
+# Maximum  time in seconds that you allow the whole operation to take.  This is
+# useful for preventing your batch jobs from hanging for hours due to slow
+# networks or links going down.
+
+_common_curl_max_time: 15
+
+###### HEARTBEAT
+
+_common_heartbeat_token: ""
+_common_heartbeat_base_url: https://heartbeat.hub.coda19.com
+_common_heartbeat_interval: 5
+_common_heartbeat_disabled: no
+
+###### ANSIBLE PULL
+
+# Should be disabled when running fully in remote deployment mode
+_common_ansible_pull_disabled: no
+
+_common_ansible_pull_repo_url: https://github.com/coda-platform/site-deployer-ansible.git
+#_common_ansible_pull_repo_branch:
+#  orange: master
+#  green: master
+
+_common_ansible_pull_directory: /opt/coda/deploy-scripts-pull
+_common_ansible_pull_log_dir: /var/log/ansible
+
+# Cron job name and interval in minutes
+# NOTE: this CRON NAME and FILE must converge with the cron installed while bootstrapping (playbooks/misc/bootstrap.yml)
+_common_ansible_pull_cron_name: "EXECUTE_ANSIBLE_PULL"
+_common_ansible_pull_cron_interval: 10
+
+###### PACKAGES
+
+_common_packages:
+  - bind-utils
+  - dstat
+  - glances
+  - htop
+  - iotop
+  - iptraf-ng
+  - jq
+  - mlocate
+  - nano
+  - net-tools
+  - nethogs
+  - sysstat
+  - tar
+  - tcpdump
+  - telnet
+  - tmux
+  - traceroute
+  - unzip
+  - vim
+  - wget
+  - zip
+
+###### SSHD
+
+_common_sshd_remove_root_authorized_keys: yes
+
+_common_sshd_config:
+  - name: AddressFamily
+    value: "any"
+  - name: AllowTcpForwarding
+    value: "no"
+  - name: Banner
+    value: "/etc/issue"
+  - name: ChallengeResponseAuthentication
+    value: "no"
+  - name: Ciphers
+    value: "aes128-ctr,aes192-ctr,aes256-ctr"
+  - name: ClientAliveCountMax
+    value: "0"
+  - name: ClientAliveInterval
+    value: "600"
+  - name: Compression
+    value: "no"
+  - name: GSSAPIAuthentication
+    value: "no"
+  - name: IgnoreUserKnownHosts
+    value: "yes"
+  - name: KerberosAuthentication
+    value: "no"
+  - name: MACs
+    value: "hmac-sha2-512,hmac-sha2-256"
+  - name: MaxAuthTries
+    value: "4"
+  - name: MaxSessions
+    value: "10"
+  - name: PasswordAuthentication
+    value: "yes"
+  - name: PermitEmptyPasswords
+    value: "no"
+  - name: PermitRootLogin
+    value: "no"
+  - name: PermitTunnel
+    value: "no"
+  - name: PermitUserEnvironment
+    value: "no"
+  - name: PrintLastLog
+    value: "yes"
+  - name: PubkeyAuthentication
+    value: "yes"
+  - name: StrictModes
+    value: "yes"
+  - name: UsePrivilegeSeparation
+    value: "sandbox"
+  - name: X11Forwarding
+    value: "yes"
+
+###### SELINUX
+
+_common_selinux_policy: targeted
+_common_selinux_state: enforcing
+_common_selinux_boolean: []
+
+###### NODE_EXPORTER
+
+_common_node_exporter_opts: "--collector.systemd"
+_common_node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz"
+_common_node_exporter_collector_textfile_dir: /var/lib/prometheus
+
+###### SWAP MANAGEMENT
+
+_common_disable_swap: no
+
+###### SYSTEM UPGRADE
+
+#_common_system_upgrade_tag: ""
+
+###### REBOOT MECANISM
+
+#_common_reboot_tag: ""

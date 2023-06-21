@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# {{ ansible_managed }}
+#
+
+################################################################################
+###### LOAD REQUIRED ENVIRONMENT STUFF
+################################################################################
+
+[ -f /etc/profile.d/proxy.sh       ] && source /etc/profile.d/proxy.sh
+[ -f /etc/profile.d/env-ansible.sh ] && source /etc/profile.d/env-ansible.sh && env-ansible
+
+################################################################################
+###### DEFINING SCRIPT VARIABLES AND PARAMETERS
+################################################################################
+
+# Global
+
+CODA_SITE_ID={{ coda_site_id }}
+CODA_HOST_ROLE="verte"
+
+CODA_HEARTBEAT_BASE_URL={{ _common_heartbeat_base_url }}
+CODA_HEARTBEAT_TOKEN=$( cat /etc/coda/heartbeat-token )
+
+CODA_CURL_CONNECT_TIMEOUT={{ _common_curl_connect_timeout }}
+CODA_CURL_MAX_TIME={{ _common_curl_max_time }}
+
+# Script specifics
+
+SLEEP_TIME=10
+
+################################################################################
+###### QUERY LOCAL NODE_EXPORTER AND PUSH TO HEARTBEAT SERVICE
+################################################################################
+
+# This part should not execute in parallel
+(
+  # If already running: dont continue and exit
+  flock -n 300 || exit 1
+
+  # Loop: fetch, submit, sleep, and repeat
+  while true; do
+
+    # Fetch
+    METRICS_FILE=$( mktemp )
+    curl \
+      --silent \
+      --output ${METRICS_FILE} \
+      --connect-timeout ${CODA_CURL_CONNECT_TIMEOUT} \
+      --max-time ${CODA_CURL_MAX_TIME} \
+      http://localhost:9100/metrics
+
+    # Submit
+    curl \
+      --silent \
+      --connect-timeout ${CODA_CURL_CONNECT_TIMEOUT} \
+      --max-time ${CODA_CURL_MAX_TIME} \
+      --request POST \
+      --header "Authorization: ${CODA_HEARTBEAT_TOKEN}" \
+      --header "Content-Type: text/plain" \
+      --data-binary @${METRICS_FILE} \
+      ${CODA19_HEARTBEAT_BASE_URL}/metrics/${CODA19_SITE_ID}/${CODA_HOST_ROLE}
+
+    # Clean and sleep
+    rm -rf ${METRICS_FILE}
+    sleep ${SLEEP_TIME}
+
+  done
+) 300>/var/lock/push-metrics.lock

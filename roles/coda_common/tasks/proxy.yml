@@ -1,0 +1,78 @@
+---
+
+###### USEFUL SCRIPTS
+
+- name: COPY | Generate an unset proxy script
+  copy:
+    dest: /usr/local/bin/env-unset-proxy.sh
+    content: |
+      #!/bin/echo !!! PLEASE SOURCE THIS FILE !!!
+      unset HTTP_PROXY
+      unset HTTPS_PROXY
+      unset FTP_PROXY
+      unset NO_PROXY
+      unset http_proxy
+      unset https_proxy
+      unset ftp_proxy
+      unset no_proxy
+    mode: 0755
+
+###### SYSTEM WIDE PROXY
+
+- name: COPY | Set system wide proxy settings
+  copy:
+    dest: /etc/profile.d/proxy.sh
+    mode: 0644
+    content: |
+      export PROXY={{ _common_global_proxy }}
+
+      export HTTP_PROXY=$PROXY
+      export HTTPS_PROXY=$PROXY
+      export FTP_PROXY=$PROXY
+
+      export http_proxy=$PROXY
+      export https_proxy=$PROXY
+      export ftp_proxy=$PROXY
+
+      export NO_PROXY="{{ _common_global_noproxy }}"
+      export no_proxy=$NO_PROXY
+  when:
+    - _common_global_proxy_enabled
+    - _common_global_proxy|length > 0
+
+- name: FILE | Ensure system wide proxy settings are absent when disabled
+  file:
+    path: /etc/profile.d/proxy.sh
+    state: absent
+  when: not _common_global_proxy_enabled or _common_global_proxy|length == 0
+
+# Be sure to take proxy setting changes in effect.
+# Only works on real SSH connections.
+
+- meta: reset_connection
+
+###### YUM/DNF PROXY
+#
+# Since CentOS/RHEL 8, /etc/dnf/dnf.conf configs takes precedence.
+# We take no chances, and manage both.
+#
+
+- name: INI_FILE | Enable proxy in /etc/yum.conf
+  ini_file:
+    path: "{{ item }}"
+    section: "main"
+    option: "proxy"
+    value: "{{ _common_yum_proxy }}"
+  with_items: "{{ _common_yum_config_files }}"
+  when:
+    - _common_yum_proxy_enabled
+    - _common_yum_proxy|length > 0
+
+- name: INI_FILE | Disable proxy in yum.conf
+  ini_file:
+    path: "{{ item }}"
+    section: "main"
+    option: "proxy"
+    state: absent
+  with_items: "{{ _common_yum_config_files }}"
+  when: not _common_yum_proxy_enabled or _common_yum_proxy|length == 0
