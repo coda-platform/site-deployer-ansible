@@ -1,0 +1,21 @@
+---
+- name: TEMPLATE | Put the AidBox service definition
+  template:
+    src: etc/firewalld/services/aidbox.xml.j2
+    dest: /etc/firewalld/services/aidbox.xml
+  register: _svc
+
+- name: SYSTEMD | Reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  when: _svc.changed
+
+- name: FIREWALLD | Manage AidBox service zones
+  firewalld:
+    zone: "{{ item.zone }}"
+    service: aidbox
+    state: "{{ item.state | default('enabled') }}"
+    permanent: yes
+    immediate: yes
+  with_items: "{{ ul_aidbox_firewalld_zones }}"
