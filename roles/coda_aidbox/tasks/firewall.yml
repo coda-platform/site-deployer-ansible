@@ -18,4 +18,4 @@
     state: "{{ item.state | default('enabled') }}"
     permanent: yes
     immediate: yes
-  with_items: "{{ ul_aidbox_firewalld_zones }}"
+  with_items: "{{ coda_aidbox_firewalld_zones }}"
