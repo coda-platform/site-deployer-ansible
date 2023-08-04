@@ -139,7 +139,6 @@
 
             ansible-pull \
               --url {{ _ansible_pull_repo_url }} \
-              --checkout fmarois_dev_wip \
               --vault-password-file /etc/ansible/vault.pass \
               --directory ${PULL_BASE} \
               --inventory ${PULL_BASE}/hosts.localhost \
