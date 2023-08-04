@@ -65,6 +65,7 @@ dnf install -y curl \
                python3-pip \
                libselinux-python3 \
                util-linux \
+			   podman \
 			   nano
 
 

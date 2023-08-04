@@ -39,8 +39,8 @@ coda_postgresql_ext_jsonknife: yes
 ################################################################################
 
 # minio env vars changed names, but we don't want to rekey all vaults now...
-coda_minio_root_user: "{{ coda_minio_server_access_key }}"
-coda_minio_root_password: "{{ coda_minio_server_secret_key }}"
+coda_minio_root_user: "{{ ul_minio_server_access_key }}"
+coda_minio_root_password: "{{ ul_minio_server_secret_key }}"
 
 coda_minio_home_dir: /data/minio/
 

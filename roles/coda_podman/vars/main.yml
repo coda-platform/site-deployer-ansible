@@ -1,0 +1,10 @@
+---
+
+ul_podman_dependencies:
+  - fuse-overlayfs
+  - slirp4netns
+
+ul_podman_packages:
+  - podman
+  - podman-docker
+  - skopeo

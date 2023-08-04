@@ -1,0 +1,23 @@
+---
+
+#------------------------------------------------------------------------------
+# GENERAL SETTINGS
+#------------------------------------------------------------------------------
+
+# Use latest version from upstream project rather than from official repositories or EPEL
+# This simply follow these instructions: https://podman.io/getting-started/installation
+
+coda_podman_install_upstream: no
+
+# Maximum namespaces per user
+
+coda_podman_max_user_namespaces: '65536'
+
+# Replace runc binary when needed
+
+coda_podman_runc_replace: no
+coda_podman_runc_version: v1.0.0-rc92
+coda_podman_runc_binary_sha256sum: 256bd490a55a1939a4c9cd15c043404b79a86429ee04129c00d33dab8c0cf040
+coda_podman_runc_binary_url: "https://github.com/opencontainers/runc/releases/download/{{ coda_podman_runc_version }}/runc.amd64"
+coda_podman_runc_binary_file: "usr/bin/runc.{{ coda_podman_runc_version }}"
+coda_podman_runc_binary_dest: /usr/bin/runc
