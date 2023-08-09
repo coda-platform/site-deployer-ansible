@@ -75,6 +75,7 @@
     _ansible_pull_repo_url: https://github.com/coda-platform/site-deployer-ansible.git
     _ansible_pull_directory: /opt/coda/deploy-scripts-pull
     _ansible_pull_log_dir: /var/log/ansible
+    
     _ansible_pull_cron_name: "EXECUTE_ANSIBLE_PULL"
     # Interval in minutes
     _ansible_pull_cron_interval: 10

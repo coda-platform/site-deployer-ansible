@@ -35,39 +35,39 @@ coda_postgresql_shared_preload_libraries:
 coda_postgresql_ext_jsonknife: yes
 
 ################################################################################
-###### UL_MINIO
+###### CODA_MINIO
 ################################################################################
 
 # minio env vars changed names, but we don't want to rekey all vaults now...
-#ul_minio_root_user: "{{ ul_minio_server_access_key }}"
-#ul_minio_root_password: "{{ ul_minio_server_secret_key }}"
+coda_minio_root_user: "{{ ul_minio_server_access_key }}"
+coda_minio_root_password: "{{ ul_minio_server_secret_key }}"
 
-#ul_minio_home_dir: /data/minio/
+coda_minio_home_dir: /data/minio/
 
-#ul_minio_server_firewalld_zones:
-#  - zone: public
-#    state: enabled
-#  - zone: local-green
-#    state: enabled
-#  - zone: local-red
-#    state: enabled
-
-################################################################################
-###### UL_AIDBOX
-################################################################################
-
-#ul_aidbox_firewalld_zones:
-#  - zone: public
-#    state: enabled
-#  - zone: local-green
-#    state: enabled
-#  - zone: local-red
-#    state: enabled
+coda_minio_server_firewalld_zones:
+  - zone: public
+    state: enabled
+  - zone: local-green
+    state: enabled
+  - zone: local-red
+    state: enabled
 
 ################################################################################
-###### UL_REDIS
+###### CODA_AIDBOX
 ################################################################################
 
-#ul_redis_firewalld_zones:
-#  - zone: local-green
-#    state: enabled
+coda_aidbox_firewalld_zones:
+  - zone: public
+    state: enabled
+  - zone: local-green
+    state: enabled
+  - zone: local-red
+    state: enabled
+
+################################################################################
+###### CODA_REDIS
+################################################################################
+
+coda_redis_firewalld_zones:
+  - zone: local-green
+    state: enabled

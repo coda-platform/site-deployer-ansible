@@ -1,0 +1,23 @@
+---
+
+- name: "COPY | Backup original configuration files"
+  copy:
+    src: "{{ item }}"
+    dest: "{{item }}.orig"
+    remote_src: yes
+    force: no
+  # Some files missing in some distributions / branches, simply ignore on error
+  ignore_errors: yes
+  with_items:
+    - /etc/containers/policy.json
+    - /etc/containers/registries.conf
+    - /etc/containers/storage.conf
+    - /usr/share/containers/containers.conf
+    - /usr/share/containers/mounts.conf
+    - /usr/share/containers/seccomp.json
+
+- name: "SYSCTL | Set max_user_namespaces={{ ul_podman_max_user_namespaces }}"
+  sysctl:
+    name: user.max_user_namespaces
+    value: "{{ ul_podman_max_user_namespaces }}"
+    state: present

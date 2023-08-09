@@ -1,0 +1,73 @@
+---
+
+- name: AIDBOXDB | GROUP | Add the group 'aidboxdb'
+  group:
+    name: aidboxdb
+    system: no
+
+- name: AIDBOXDB | USER | Add the user 'aidboxdb'
+  user:
+    name: aidboxdb
+    comment: AidBox DB Service account
+    group: aidboxdb
+    home: /var/lib/aidboxdb
+    system: no
+  register: _user
+
+- name: AIDBOXDB | TEMPLATE | Generate /etc/default/aidboxdb
+  template:
+    src: etc/default/aidboxdb.j2
+    dest: /etc/default/aidboxdb
+    owner: aidboxdb
+    group: aidboxdb
+    mode: 0640
+  notify:
+    - restart aidboxdb
+
+- name: AIDBOXDB | TEMPLATE | Copy systemd service unit
+  template:
+    src: etc/systemd/system/aidboxdb.service.j2
+    dest: /etc/systemd/system/aidboxdb.service
+    owner: root
+    group: root
+    mode: 0664
+  notify:
+    - restart aidboxdb
+
+### Create data directory
+
+- name: AIDBOXDB | FILE | Ensure /data/aidboxdb is present
+  file:
+    dest: /data/aidboxdb
+    owner: aidboxdb
+    group: aidboxdb
+    mode: 0700
+    state: directory
+
+### Invoke the puller
+
+- name: "INCLUDE_TASKS | roles/coda_podman/tasks/puller.yml"
+  include_tasks: "{{ playbook_dir }}/../roles/coda_podman/tasks/puller.yml"
+  vars:
+    _image_repo: "{{ coda_aidbox_db_image_registry }}"
+    _image_name: "{{ coda_aidbox_db_image_name }}"
+    _image_tag: "{{ coda_aidbox_db_image_tag }}"
+    _image_user: aidboxdb
+    _image_change_handler: restart aidboxdb
+    _image_prune_enabled: true
+    _remote_check_hours: "{{ coda_aidbox_db_image_remote_check_hours }}"
+    _remote_check_runs: "{{ coda_aidbox_db_image_remote_check_runs }}"
+
+### Start and enable the Service
+
+- name: AIDBOXDB | SYSTEMD | Ensure aidboxdb.service is started and enabled
+  systemd:
+    name: aidboxdb
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  # We register this task status.
+  # Don't start + restart service with handlers, usualy on first run.
+  register: _systemd_aidboxdb
+
+- meta: flush_handlers

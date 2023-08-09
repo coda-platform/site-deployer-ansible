@@ -62,6 +62,8 @@ Vagrant.configure("2") do |config|
 
     dnf update -y
 
+
+
   SHELL
 
 end
