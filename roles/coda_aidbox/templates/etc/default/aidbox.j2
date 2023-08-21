@@ -22,7 +22,7 @@ AIDBOX_CLIENT_SECRET={{ coda_aidbox_conf_client_secret}}
 
 # Admin credential
 AIDBOX_ADMIN_ID={{ coda_aidbox_conf_admin_id }}
-AIDBOX_ADMIN_PASSWORD={{ coda_aidbox_conf_admin_password }}
+AIDBOX_ADMIN_PASSWORD={{ ul_aidbox_conf_admin_password }}
 
 # The REST service listens on this port
 AIDBOX_PORT={{ coda_aidbox_port }}
@@ -35,7 +35,7 @@ PGHOST={{ coda_aidbox_db_host }}
 PGPORT={{ coda_aidbox_db_port }}
 PGDATABASE={{ coda_aidbox_db_name }}
 PGUSER={{ coda_aidbox_db_user }}
-PGPASSWORD={{ coda_aidbox_db_password }}
+PGPASSWORD={{ ul_aidbox_db_password }}
 
 {% if _common_global_proxy is defined and _common_global_proxy|length > 0  %}
 # Extra-parameters for the JVM.
