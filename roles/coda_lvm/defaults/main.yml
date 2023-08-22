@@ -1,0 +1,6 @@
+---
+
+coda_lvm_enabled: false
+coda_lvm_pvresize_enabled: false
+
+coda_lvm_groups: []

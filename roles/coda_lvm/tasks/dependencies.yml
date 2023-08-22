@@ -1,0 +1,17 @@
+---
+- name: YUM | Installer LVM et outils nécessaires
+  yum:
+    name:
+      - lvm2
+      - sg3_utils
+      - system-storage-manager # utilitaire ssm (ssm list)
+    state: present
+
+- name: COMMAND | sg_scan - Scan des SCSI devices
+  command: sg_scan
+  register: scsi_devices
+  changed_when: false
+
+- name: COMMAND | rescan-scsi-bus.sh - Scan des disques
+  command: /usr/bin/rescan-scsi-bus.sh
+  changed_when: false
