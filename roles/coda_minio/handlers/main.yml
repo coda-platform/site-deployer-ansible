@@ -1,0 +1,21 @@
+---
+
+######
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+######
+
+- name: reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+
+######
+
+- name: restart minio
+  systemd:
+    name: minio
+    state: restarted
+    daemon_reload: yes
