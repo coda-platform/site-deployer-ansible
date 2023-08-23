@@ -4,7 +4,7 @@
   import_tasks: dependencies.yml
   tags: coda_lvm
 
-- name: IMPORT_TASKS | Manage LVM
-  import_tasks: manage-lvm.yml
-  when: coda_lvm_enabled | bool
-  tags: coda_lvm
+#- name: IMPORT_TASKS | Manage LVM
+#  import_tasks: manage-lvm.yml
+#  when: coda_lvm_enabled | bool
+#  tags: coda_lvm
