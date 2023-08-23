@@ -2,12 +2,12 @@
 
 - name: "YUM | Install dependencies"
   yum:
-    name: "{{ ul_podman_dependencies }}"
+    name: "{{ coda_podman_dependencies }}"
     state: present
 
 - name: "YUM | Install PODMAN"
   yum:
-    name: "{{ ul_podman_packages }}"
+    name: "{{ coda_podman_packages }}"
     state: present
 
 - block:
@@ -21,11 +21,11 @@
 
     - name: "GET_URL | Download runc binary"
       get_url:
-        url:  "{{ ul_podman_runc_binary_url  }}"
-        dest: "{{ ul_podman_runc_binary_dest }}"
-        sha256sum: "{{ ul_podman_runc_binary_sha256sum }}"
+        url:  "{{ coda_podman_runc_binary_url  }}"
+        dest: "{{ coda_podman_runc_binary_dest }}"
+        sha256sum: "{{ coda_podman_runc_binary_sha256sum }}"
 
-  when: ul_podman_runc_replace|bool
+  when: coda_podman_runc_replace|bool
 
 # Creates a new SELinux rule to allow cron to spawn containers (denied by default)
 # - name: FILE | Ensure /etc/selinux/coda19 is here

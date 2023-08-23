@@ -16,8 +16,8 @@
     - /usr/share/containers/mounts.conf
     - /usr/share/containers/seccomp.json
 
-- name: "SYSCTL | Set max_user_namespaces={{ ul_podman_max_user_namespaces }}"
+- name: "SYSCTL | Set max_user_namespaces={{ coda_podman_max_user_namespaces }}"
   sysctl:
     name: user.max_user_namespaces
-    value: "{{ ul_podman_max_user_namespaces }}"
+    value: "{{ coda_podman_max_user_namespaces }}"
     state: present
