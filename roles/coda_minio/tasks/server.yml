@@ -35,7 +35,7 @@
 #   notify: restart minio
 
 - file:
-    path: /usr/local/bin/mino
+    path: /usr/local/bin/minio
     state: absent
 
 - name: COPY | /usr/local/bin/minio
