@@ -5,4 +5,5 @@ dependencies:
   - role: coda_podman
   - role: coda_minio
   - role: coda_aidbox
+  - role: coda_fhirbase
 #  - role: coda_orthanc

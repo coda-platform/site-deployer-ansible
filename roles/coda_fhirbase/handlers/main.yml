@@ -1,0 +1,6 @@
+---
+
+- name: restart fhirbase
+  systemd:
+    name: fhirbase
+    state: restarted
