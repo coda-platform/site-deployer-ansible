@@ -1,10 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+unless Vagrant.has_plugin?("vagrant-disksize")
+  raise  Vagrant::Errors::VagrantError.new, "vagrant-disksize plugin is missing. Please install it using 'vagrant plugin install vagrant-disksize' and rerun 'vagrant up'"
+end
 
 Vagrant.configure("2") do |config|
 
   config.vm.box = "https://dl.rockylinux.org/vault/rocky/9.1/images/x86_64/Rocky-9-Vagrant-Vbox.latest.x86_64.box"
   config.vm.hostname = "site-deployment-vm"
+  config.disksize.size = '30GB'
+  #config.vm.disk :disk, size: "30GB", primary: true
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
@@ -13,6 +18,7 @@ Vagrant.configure("2") do |config|
   end
 
   if Vagrant::Util::Platform.windows?
+    #config.vbguest.installer_options = { allow_kernel_upgrade: true }
     config.vm.synced_folder ".", "/vagrant", type: "virtualbox",
       mount_options: ["dmode=774,fmode=774"]   
 
@@ -61,6 +67,10 @@ Vagrant.configure("2") do |config|
     # Update packages
 
     dnf update -y
+
+    echo ", +" | sfdisk -N 5 /dev/sda --force
+    partprobe
+    sudo xfs_growfs /
 
 
 

@@ -1,0 +1,22 @@
+#
+# {{ ansible_managed }}
+#
+[Unit]
+Description=High performance object storage server compatible with Amazon S3 APIs
+Documentation=https://docs.min.io/
+Wants=network.target
+After=network.target
+AssertFileIsExecutable=/usr/local/bin/minio
+
+[Service]
+User=minio
+Group=minio
+EnvironmentFile=/etc/default/minio
+ExecStart=/usr/local/bin/minio server --address ":{{ coda_minio_server_api_port }}" --console-address ":{{ coda_minio_server_console_port }}" {{ coda_minio_server_opts }} {{ coda_minio_home_dir }}
+Restart=on-failure
+
+# Specifies the maximum file descriptor number that can be opened by this process
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

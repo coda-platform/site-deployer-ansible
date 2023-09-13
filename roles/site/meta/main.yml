@@ -1,5 +1,9 @@
 ---
 dependencies:
   - role: coda_common
+  - role: coda_data
+  - role: coda_podman
+  - role: coda_minio
   - role: coda_aidbox
-#  - role: coda_orthanc
+  - role: coda_fhirbase
+  - role: coda_orthanc
