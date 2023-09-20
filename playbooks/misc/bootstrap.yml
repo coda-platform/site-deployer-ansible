@@ -71,7 +71,6 @@
   connection: local
   gather_facts: yes
   vars:
-    #_ansible_pull_repo_url: https://github.com/CODA-19/deploy-scripts.git
     _ansible_pull_repo_url: https://github.com/coda-platform/site-deployer-ansible.git
     _ansible_pull_directory: /opt/coda/deploy-scripts-pull
     _ansible_pull_log_dir: /var/log/ansible
@@ -105,8 +104,6 @@
           #### Parameters
 
           export PULL_BASE={{ _ansible_pull_directory }}
-          #export ANSIBLE_BASE=${PULL_BASE}/ansible
-          export ANSIBLE_ROLES_PATH=${PULL_BASE}/roles
 
           {% if ansible_local.coda.site.proxy is defined and ansible_local.coda.site.proxy|length > 0 %}
           #### Export proxy, as defined in localfacts while bootstraping.
