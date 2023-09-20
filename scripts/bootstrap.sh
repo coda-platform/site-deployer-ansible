@@ -3,9 +3,9 @@
 # Locally test this script in Vagrant:
 #    host$ vagrant rsync
 #    guest# 
-export CODA_USE_VAGRANT=true
+#export CODA_USE_VAGRANT=true
 #    guest# 
-rm -rf /opt/coda #&& bash /vagrant/scripts/bootstrap.sh
+#rm -rf /opt/coda #&& bash /vagrant/scripts/bootstrap.sh
 #
 ################################################################################
 #### GENERAL PARAMETERS AND SETTINGS
@@ -21,12 +21,11 @@ CODA_ANSIBLE_VENV_DIR=${CODA_BASE_DIR}/venv-ansible
 CODA_USE_VAGRANT=${CODA_USE_VAGRANT:-false}
 CODA_ANSIBLE_VENV_REQUIREMENTS_FILE=/vagrant/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_FILE=/vagrant/playbooks/misc/bootstrap.yml
-#CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_FILE=/vagrant/playbooks/bootstrap.yml
+
 
 # ANSIBLE VENV REQUIREMENTS FILE
 
-#CODA_ANSIBLE_BASE_URL=https://raw.githubusercontent.com/CODA-19/deploy-scripts/master/ansible
-CODA_ANSIBLE_BASE_URL=https://raw.githubusercontent.com/coda-platform/site-deployer-ansible/fmarois_dev_wip
+CODA_ANSIBLE_BASE_URL=https://raw.githubusercontent.com/coda-platform/site-deployer-ansible/main
 CODA_ANSIBLE_VENV_REQUIREMENTS_URL=${CODA_ANSIBLE_BASE_URL}/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_URL=${CODA_ANSIBLE_BASE_URL}/playbooks/misc/bootstrap.yml
 
@@ -66,7 +65,6 @@ dnf install -y curl \
                libselinux-python3 \
                util-linux \
                nano
-#			   podman \
 
 
 
@@ -97,14 +95,15 @@ chmod 0644 ~coda-deployment/.ssh/authorized_keys
 
 # echo "${BOLD}${YELLOW}*** Cloning deployment scripts ***${NORMAL}"
 #
+# FORCE_GIT_SOURCES=false
+#
 # mkdir -p ${CODA_BASE_DIR}
 # if [[ -d "/vagrant" && ${FORCE_GIT_SOURCES} = false ]]; then
 #   echo "${YELLOW}Using local /vagrant folder...${NORMAL}"
-#   mkdir -p ${CODA_BASE_DIR}/deploy-scripts
-#   ln -sf /vagrant ${CODA_BASE_DIR}/deploy-scripts/ansible
+#   ln -sf /vagrant ${CODA_BASE_DIR}/deploy-scripts-pull
 # else
 #   echo "${YELLOW}Cloning from github.com...${NORMAL}"
-#   git clone https://github.com/CODA-19/deploy-scripts.git ${CODA_BASE_DIR}/deploy-scripts/
+#   git clone https://github.com/coda-platform/site-deployer-ansible.git ${CODA_BASE_DIR}/deploy-scripts-pull/
 # fi
 
 ################################################################################
