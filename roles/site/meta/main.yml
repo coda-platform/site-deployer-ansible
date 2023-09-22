@@ -7,3 +7,4 @@ dependencies:
   - role: coda_aidbox
   - role: coda_fhirbase
   - role: coda_orthanc
+  - role: coda_redis
