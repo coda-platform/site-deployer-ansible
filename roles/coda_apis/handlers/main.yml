@@ -1,0 +1,27 @@
+---
+
+- name: restart coda-site-api
+  systemd:
+    name: coda-site-api
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: not _systemd_coda_site_api.changed
+
+
+- name: restart coda-stats-api
+  systemd:
+    name: coda-stats-api
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: not _systemd_coda_stats_api.changed
+
+
+- name: restart coda-learning-api
+  systemd:
+    name: coda-learning-api
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: not _systemd_coda_learning_api.changed

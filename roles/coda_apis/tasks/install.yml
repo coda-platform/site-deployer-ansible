@@ -1,0 +1,95 @@
+---
+
+- name: "{{ task_title }} | GROUP | Add the group '{{ container_name }}'"
+  group:
+    name: "{{ container_name }}"
+    system: no
+
+- name: "{{ task_title }} | USER | Add the user '{{ container_name }}'"
+  user:
+    name: "{{ container_name }}"
+    group: "{{ container_name }}"
+    home: "/var/lib/{{ container_name }}"
+    system: no
+
+- name: "{{ task_title }} | TEMPLATE | Generate /etc/default/{{ container_name }}"
+  template:
+    src: "etc/default/{{ container_name }}.j2"
+    dest: "/etc/default/{{ container_name }}"
+    owner: "{{ container_name }}"
+    group: "{{ container_name }}"
+    mode: 0640
+  notify:
+    - "restart {{ container_name }}"
+
+- name: "{{ task_title }} | TEMPLATE | Copy systemd service unit"
+  template:
+    src: etc/systemd/system/coda-container-api.service.j2
+    dest: "/etc/systemd/system/{{ container_name }}.service"
+    owner: root
+    group: root
+    mode: 0664
+  notify:
+    - "restart {{ container_name }}"
+
+# Create data directory
+- name: "{{ task_title }} | FILE | Ensure /data/{{ container_name }} is present"
+  file:
+    dest: "/data/{{ container_name }}"
+    owner: "{{ container_name }}"
+    group: "{{ container_name }}"
+    mode: 0750
+    state: directory
+
+# Create SELinux rules to make this service work correctly (CentOS 7 only)
+- block:
+
+    - name: "{{ task_title }} | SELINUX | FILE | Ensure target directory exists: {{ _selinux_module_dir }}"
+      file:
+        path: "{{ _selinux_module_dir }}"
+        state: directory
+
+    - name: "{{ task_title }} | SELINUX | COPY | {{ _selinux_module_dir }}/{{ _selinux_module_name }}.te"
+      copy:
+        src: "etc/selinux/coda/{{ _selinux_module_name }}.te"
+        dest: "{{ _selinux_module_dir }}/{{ _selinux_module_name }}.te"
+      register: _selinux
+
+    - name: "{{ task_title }} | SELINUX | COMMAND | checkmodule"
+      command: checkmodule -M -m -o {{ _selinux_module_name }}.mod {{ _selinux_module_name }}.te
+      args:
+        chdir: "{{ _selinux_module_dir }}"
+      when: _selinux.changed
+
+    - name: "{{ task_title }} | SELINUX | COMMAND | semodule_package"
+      command: semodule_package -o {{ _selinux_module_name }}.pp -m {{ _selinux_module_name }}.mod
+      args:
+        chdir: "{{ _selinux_module_dir }}"
+      when: _selinux.changed
+
+    - name: "{{ task_title }} | SELINUX | COMMAND | semodule"
+      command: semodule -i {{ _selinux_module_name }}.pp
+      args:
+        chdir: "{{ _selinux_module_dir }}"
+      when: _selinux.changed
+
+  vars:
+    _selinux_module_dir: /etc/selinux/coda
+    _selinux_module_name: "{{ container_name }}"
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == '7'
+
+### Invoke the puller
+
+- name: "INCLUDE_TASKS | roles/coda_podman/tasks/puller.yml"
+  include_tasks: "{{ playbook_dir }}/../roles/coda_podman/tasks/puller.yml"
+  vars:
+    _image_repo: "{{ coda_docker_image_registry }}"
+    _image_name: "{{ docker_image_name }}"
+    _image_tag: "{{ docker_image_tag }}"
+    _image_user: "{{ container_name }}"
+    _image_change_handler: "restart {{ container_name }}"
+    _image_prune_enabled: true
+    _remote_check_hours: '*'
+    _remote_check_runs: '*'

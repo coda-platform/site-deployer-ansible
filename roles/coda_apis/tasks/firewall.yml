@@ -1,0 +1,23 @@
+---
+- name: TEMPLATE | Put the CODA-API service definition
+  template:
+    src: etc/firewalld/services/coda-site-api.xml.j2
+    dest: /etc/firewalld/services/coda-site-api.xml
+  register: _svc
+
+- name: SYSTEMD | Reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  when: _svc.changed
+
+- name: FIREWALLD | Manage CODA-API service zones
+  firewalld:
+    zone: "{{ item.zone }}"
+    service: coda-site-api
+    state: "{{ item.state | default('enabled') }}"
+    permanent: yes
+    immediate: yes
+  with_items: "{{ coda_green_firewalld_zones }}"
+  vars:
+    ansible_python_interpreter: /bin/python3

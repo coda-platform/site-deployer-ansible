@@ -1,0 +1,41 @@
+
+- name: "TEMPLATE | /usr/local/bin/cleanup-apis.sh"
+  template:
+    src: usr/local/bin/cleanup-apis.sh.j2
+    dest: /usr/local/bin/cleanup-apis.sh
+    owner: root
+    group: root
+    mode: 0755
+
+# REMOVE ME LATER
+- name: FILE | Remove old scripts locations
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/bin/restart_coda_apis
+    - /usr/local/bin/restart_coda_apis.sh
+
+# Do we need to execute our cleanup-apis script?
+
+- when: _green_clean_apis_tag is defined and _green_clean_apis_tag | string | length > 0
+  block:
+
+      - name: "SLURP | Check for cookie file - /etc/coda/cleanup-apis"
+        slurp:
+          src: /etc/coda/cleanup-apis
+        ignore_errors: yes
+        register: _slurp
+
+      - when: _slurp.failed or _slurp['content'] | b64decode | string != _green_clean_apis_tag | string
+        block:
+
+            - name: COMMAND | Execute /usr/local/bin/cleanup-apis.sh
+              command: /usr/local/bin/cleanup-apis.sh
+              failed_when: false
+              register: _command
+
+            - name: COPY | Mark as done
+              copy:
+                dest: /etc/coda/cleanup-apis
+                content: "{{ _green_clean_apis_tag }}"

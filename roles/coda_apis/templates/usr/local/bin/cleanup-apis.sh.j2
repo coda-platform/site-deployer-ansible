@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# {{ ansible_managed }}
+#
+
+#### CODA-LEARNING-API
+
+echo "=== coda-learning-api cleanup ==="
+systemctl stop coda-learning-api
+sudo -i -u coda-learning-api bash << EOF
+cd ~
+PID=$( netstat -tulpn | grep ":{{ coda_learning_api_port }}" | sed "s/.*LISTEN\(.*\)\/node.*/\1/" | sed -e 's/^[ \t]*//' )
+kill -15 $PID 2>/dev/null
+sleep 5
+kill -9 $PID  2>/dev/null
+podman rmi --force docker.io/coda/coda-learning-api:latest
+podman system prune --all --force && podman rmi --all
+EOF
+echo "=== coda-learning-api cleanup finished ==="
+
+#### CODA-STATS-API
+
+echo "=== coda-stats-api cleanup ==="
+systemctl stop coda-stats-api
+sudo -i -u coda-stats-api bash << EOF
+cd ~
+PID=$( netstat -tulpn | grep ":{{ coda_stats_api_port }}" | sed "s/.*LISTEN\(.*\)\/node.*/\1/" | sed -e 's/^[ \t]*//' )
+kill -15 $PID 2>/dev/null
+sleep 5
+kill -9 $PID  2>/dev/null
+podman rmi --force docker.io/coda/coda-stats-api:latest
+podman system prune --all --force && podman rmi --all
+EOF
+echo "=== coda-stats-api cleanup finished ==="
+
+#### CODA-SITE-API
+
+echo "=== coda-site-api cleanup ==="
+systemctl stop coda-site-api
+sudo -i -u coda-site-api bash << EOF
+cd ~
+PID=$( netstat -tulpn | grep ":{{ coda_site_api_port }}" | sed "s/.*LISTEN\(.*\)\/node.*/\1/" | sed -e 's/^[ \t]*//' )
+kill -15 $PID 2>/dev/null
+sleep 5
+kill -9 $PID  2>/dev/null
+podman rmi --force docker.io/coda/coda-site-api:latest
+podman system prune --all --force && podman rmi --all
+EOF
+echo "=== coda-site-api cleanup finished ==="
