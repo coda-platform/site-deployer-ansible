@@ -11,4 +11,4 @@ packaging==23.1
 pycparser==2.21
 PyYAML==6.0
 resolvelib==0.8.1
-tensorflow==2.2
+tensorflow==2.7
