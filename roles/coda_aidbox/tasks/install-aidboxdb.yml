@@ -44,10 +44,6 @@
     mode: 0700
     state: directory
 
-### Enable lingering for user aidbox
-#- name: Enable lingering is needed
-#  command: "loginctl enable-linger aidboxdb"
-
 ### Invoke the puller
 
 - name: "INCLUDE_TASKS | roles/coda_podman/tasks/puller.yml"
