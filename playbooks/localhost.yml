@@ -110,17 +110,3 @@
         name: site
       tags:
         - always
-
-    #- name: INCLUDE_ROLE | _GREEN
-    #  include_role:
-    #    name: _green
-    #  when: coda19_host_role == "green"
-    #  tags:
-    #    - always
-
-    #- name: FILE | Remove file /etc/coda19/boostrapping
-    #  file:
-    #    path: /etc/coda19/bootstrapping
-    #    state: absent
-    #  tags:
-    #    - always

@@ -19,10 +19,12 @@ Vagrant.configure("2") do |config|
 
   if Vagrant::Util::Platform.windows?
     #config.vbguest.installer_options = { allow_kernel_upgrade: true }
+    config.vbguest.auto_update = false
     config.vm.synced_folder ".", "/vagrant", type: "virtualbox",
       mount_options: ["dmode=774,fmode=774"]   
 
     config.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
         vb.cpus = 2
         vb.memory = 4096
     end
