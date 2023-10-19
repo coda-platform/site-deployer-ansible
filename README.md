@@ -1,8 +1,8 @@
-# SITE-DEPLOYER-ANSIBLE
+# Ansible scripts for site node deployment
 
-# Local Python Virtual Environment
+## Local Python virtual environment
 
-Create virtual environement
+**Create virtual environement**
 
 ```
 python3 -m venv .venv
@@ -11,7 +11,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Reset virtual environment
+**Reset virtual environment**
 
 ```
 deactivate
@@ -23,7 +23,18 @@ pip install -r requirements.in
 pip freeze > requirements.txt
 ```
 
-# Vagrant
+## Setup Vagrant
+
+**Mac OS X**
+
+Install Vagrant:
+
+- First, install Vagrant: `brew install vagrant`
+- Second, install a box provider. On Mac, VirtualBox is easiest. For Apple Silicon (M1/M2), must use the [latest development build](https://www.virtualbox.org/wiki/Testbuilds) - use the build called `macOS/ARM64 BETA`
+
+## Setup Firewall
+
+**Fedora**
 
 With Fedora, NFS and Squid services will work only after doing this:
 ```
@@ -31,6 +42,8 @@ firewall-cmd --permanent --zone=libvirt --add-service=nfs
 firewall-cmd --permanent --zone=libvirt --add-service=squid
 firewall-cmd --reload
 ```
+
+## Launch Vagrant
 
 Start and provision:
 ```
@@ -47,7 +60,7 @@ Destroy virtual machine:
 vagrant destroy
 ```
 
-# Ansible
+## Launch Ansible
 
 Launch playbook from this directory:
 
