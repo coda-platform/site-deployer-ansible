@@ -1,0 +1,55 @@
+###
+### {{ ansible_managed }}
+###
+
+[Unit]
+Description=Podman service for {{ coda_orthanc_service_name }}
+After=network.target
+
+[Service]
+Type=simple
+
+User={{ coda_orthanc_user }}
+Group={{ coda_orthanc_group }}
+
+# Take no chances, force a stop and remove before starting.
+# NOTE: In podman v1.6 there's no --ignore switches for «stop» and «rm»
+ExecStartPre=-/usr/bin/podman stop --time {{ coda_orthanc_container_stop_timeout }} {{ coda_orthanc_service_name }}
+ExecStartPre=-/usr/bin/podman rm --force {{ coda_orthanc_service_name }}
+ExecStartPre=-/usr/bin/rm -f {{ coda_orthanc_container_pidfile }} {{ coda_orthanc_container_cidfile }}
+ExecStartPre=-/usr/bin/pkill -u {{ coda_orthanc_user }} --signal 15
+ExecStartPre=-/usr/bin/sleep 5
+ExecStartPre=-/usr/bin/pkill -u {{ coda_orthanc_user }} --signal 9
+ExecStartPre=/bin/mkdir -p /tmp/%n.tmp
+
+ExecStart=/usr/bin/podman run --name {{ coda_orthanc_service_name }} \
+  --conmon-pidfile {{ coda_orthanc_container_pidfile }} \
+  --cidfile {{ coda_orthanc_container_cidfile }} \
+  --env-file /etc/default/{{ coda_orthanc_service_name }} \
+  --log-driver journald \
+  --network host \
+  --publish 4242:4242 \
+  --publish 8042:8042 \
+  --volume /data/orthanc:/var/lib/orthanc:z \
+  --volume /etc/orthanc:/etc/orthanc:z \
+  --volume /tmp/%n.tmp:/tmp:z \
+  --rm --detach \
+  {{ coda_orthanc_image_repo }}/{{ coda_orthanc_image_name }}:{{ coda_orthanc_image_tag }}
+
+# Stop and remove
+# NOTE: In podman v1.6 there's no --ignore switches for «stop» and «rm»
+ExecStop=-/usr/bin/podman stop --time {{ coda_orthanc_container_stop_timeout }} {{ coda_orthanc_service_name }}
+ExecStop=-/usr/bin/podman rm --force {{ coda_orthanc_service_name }}
+ExecStop=-/usr/bin/pkill -u {{ coda_orthanc_user }} --signal 15
+ExecStop=-/usr/bin/sleep 5
+ExecStop=-/usr/bin/pkill -u {{ coda_orthanc_user }} --signal 9
+
+Restart=on-failure
+RestartSec={{ coda_orthanc_systemd_restart_sec }}
+TimeoutStartSec={{ coda_orthanc_systemd_timeout_start_sec }}
+
+KillMode=none
+PIDFile={{ coda_orthanc_container_pidfile }}
+
+[Install]
+WantedBy=multi-user.target

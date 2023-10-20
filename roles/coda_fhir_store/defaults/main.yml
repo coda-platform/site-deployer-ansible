@@ -1,0 +1,52 @@
+---
+
+#### AIDBOX
+
+coda_aidbox_firewalld_zones:
+  - zone: public
+    state: enabled
+
+coda_aidbox_port: 8888
+
+coda_aidbox_conf_admin_id: admin
+ul_aidbox_conf_admin_password: password
+
+coda_aidbox_conf_client_id: client
+coda_aidbox_conf_client_secret: secret
+
+coda_aidbox_image_registry: docker.io
+coda_aidbox_image_name: healthsamurai/aidboxone
+coda_aidbox_image_tag: 2206-lts
+
+coda_aidbox_fhir_version: 4.0.0
+
+# only check at night
+coda_aidbox_image_remote_check_hours: [0, 2, 4]
+coda_aidbox_image_remote_check_runs: [0, 2, 4]
+
+#### AIDBOXDB
+
+coda_aidbox_db_user: aidboxdb
+coda_aidbox_db_name: aidboxdb
+coda_aidbox_db_host: 127.0.0.1
+coda_aidbox_db_port: 5432
+
+coda_aidbox_db_image_registry: docker.io
+coda_aidbox_db_image_name: healthsamurai/aidboxdb
+coda_aidbox_db_image_tag: 13.2
+
+# only check at night
+coda_aidbox_db_image_remote_check_hours: [0, 2, 4]
+coda_aidbox_db_image_remote_check_runs: [0, 2, 4]
+
+#### General and common stuff
+
+# Systemd stuff
+coda_aidbox_systemd_temp_dir: "{{ '/tmp' if ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 9 else '%T' }}"
+coda_aidbox_systemd_timeout_start_sec: 120
+coda_aidbox_systemd_restart_sec: 30
+
+# Podman stuff
+coda_aidbox_container_stop_timeout: 15
+coda_aidbox_container_cidfile: "{{ coda_aidbox_systemd_temp_dir }}/%n-cid"
+coda_aidbox_container_pidfile: "{{ coda_aidbox_systemd_temp_dir }}/%n-pid"

@@ -1,0 +1,27 @@
+---
+- name: TEMPLATE | Put the AidBox service definition
+  template:
+    src: etc/firewalld/services/aidbox.xml.j2
+    dest: /etc/firewalld/services/aidbox.xml
+  register: _svc
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+- name: SYSTEMD | Reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  when: _svc.changed
+  vars:
+    ansible_python_interpreter: /bin/python3
+
+- name: FIREWALLD | Manage AidBox service zones
+  firewalld:
+    zone: "{{ item.zone }}"
+    service: aidbox
+    state: "{{ item.state | default('enabled') }}"
+    permanent: yes
+    immediate: yes
+  with_items: "{{ coda_aidbox_firewalld_zones }}"
+  vars:
+    ansible_python_interpreter: /bin/python3

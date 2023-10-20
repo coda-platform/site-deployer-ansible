@@ -3,9 +3,9 @@ dependencies:
   - role: coda_common
   - role: coda_data
   - role: coda_podman
-  - role: coda_minio
-  - role: coda_aidbox
+  - role: coda_object_store
+  - role: coda_fhir_store
   - role: coda_fhirbase
-  - role: coda_orthanc
-  - role: coda_redis
+  - role: coda_dicom_store
+  - role: coda_cache_db
   - role: coda_apis
