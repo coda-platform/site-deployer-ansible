@@ -1,0 +1,53 @@
+###
+### {{ ansible_managed }}
+###
+
+[Unit]
+Description={{ container_name }}
+After=network.target
+
+[Service]
+Type=simple
+
+User={{ container_name }}
+Group={{ container_name }}
+
+# Take no chances, force a stop and remove before starting.
+# NOTE: In podman v1.6 there's no --ignore switches for «stop» and «rm»
+ExecStartPre=-/usr/bin/podman stop --time {{ coda_green_container_stop_timeout }} {{ container_name }}
+ExecStartPre=-/usr/bin/podman rm --force {{ container_name }}
+ExecStartPre=-/usr/bin/rm -f {{ coda_green_container_pidfile }} {{ coda_green_container_cidfile }}
+ExecStartPre=-/usr/bin/pkill -u {{ container_name }} --signal 15
+ExecStartPre=-/usr/bin/sleep 5
+ExecStartPre=-/usr/bin/pkill -u {{ container_name }} --signal 9
+ExecStartPre=/bin/mkdir -p /tmp/%n.tmp
+
+ExecStart=/usr/bin/podman run --name {{ container_name }} \
+  --conmon-pidfile {{ coda_green_container_pidfile }} \
+  --cidfile {{ coda_green_container_cidfile }} \
+  --env-file /etc/default/{{ container_name }} \
+  --log-driver journald \
+  --network host \
+  --publish {{ container_port }}:{{ container_port }} \
+  --volume /data/{{ container_name }}:/data:z \
+  --volume /tmp/%n.tmp:/tmp:z \
+  --rm --detach \
+  {{ coda_docker_image_registry }}/{{ docker_image_name }}:{{ docker_image_tag }}
+
+# Stop and remove
+# NOTE: In podman v1.6 there's no --ignore switches for «stop» and «rm»
+ExecStop=-/usr/bin/podman stop --time {{ coda_green_container_stop_timeout }} {{ container_name }}
+ExecStop=-/usr/bin/podman rm --force {{ container_name }}
+ExecStop=-/usr/bin/pkill -u {{ container_name }} --signal 15
+ExecStop=-/usr/bin/sleep 5
+ExecStop=-/usr/bin/pkill -u {{ container_name }} --signal 9
+
+Restart=on-failure
+RestartSec={{ coda_green_systemd_restart_sec }}
+TimeoutStartSec={{ coda_green_systemd_timeout_start_sec }}
+
+KillMode=none
+PIDFile={{ coda_green_container_pidfile }}
+
+[Install]
+WantedBy=multi-user.target

@@ -8,8 +8,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "https://dl.rockylinux.org/vault/rocky/9.1/images/x86_64/Rocky-9-Vagrant-Vbox.latest.x86_64.box"
   config.vm.hostname = "site-deployment-vm"
+  #Expand disk size to 30GB
   config.disksize.size = '30GB'
-  #config.vm.disk :disk, size: "30GB", primary: true
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
@@ -18,11 +18,16 @@ Vagrant.configure("2") do |config|
   end
 
   if Vagrant::Util::Platform.windows?
-    #config.vbguest.installer_options = { allow_kernel_upgrade: true }
+    #Added option to prevent auto update of vb guest addition to prevent failure when decrepency of version between guest and host 
+    config.vbguest.auto_update = false
+
+    #Mount vagrant folder on guest
     config.vm.synced_folder ".", "/vagrant", type: "virtualbox",
       mount_options: ["dmode=774,fmode=774"]   
 
     config.vm.provider "virtualbox" do |vb|
+        #Add nested virtualisation option to prevent failure of libtensorflow
+        vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
         vb.cpus = 2
         vb.memory = 4096
     end
@@ -65,9 +70,9 @@ Vagrant.configure("2") do |config|
     sed -Ei 's/^#baseurl=/baseurl=/g'        /etc/yum.repos.d/rocky*.repo
 
     # Update packages
-
     dnf update -y
 
+    #Expand disk /dev/sda to use full drive space from within guest
     echo ", +" | sfdisk -N 5 /dev/sda --force
     partprobe
     sudo xfs_growfs /

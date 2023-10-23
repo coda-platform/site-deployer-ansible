@@ -1,0 +1,71 @@
+---
+
+# Control Plane Address
+
+coda_green_hub_api_url: https://api.hub.coda19.com
+
+coda_green_firewalld_zones:
+  - zone: public
+    state: enabled
+
+coda_docker_image_registry: docker.io
+
+################################################################################
+#### CODA-SITE-API
+################################################################################
+
+# Listening port (TCP)
+coda_site_api_port: 5418
+
+# Environnement variables
+coda_site_api_keycloak_url_and_realm: https://auth.hub.coda19.com/auth/realms/coda19-pr/
+coda_site_api_keycloak_client_id: coda19-site
+coda_site_api_stats_api_endpoint: http://localhost:5427
+coda_site_api_learning_api_endpoint: http://localhost:5445
+
+# Image and tag to use
+coda_site_api_image_name: coda19/coda19-site-api
+coda_site_api_image_tag: latest
+
+################################################################################
+#### CODA-STATS-API
+################################################################################
+
+# Listening port (TCP)
+coda_stats_api_port: 5427
+
+# Environnement variables
+coda_stats_api_fake_aidbox: "false"
+coda_stats_api_aidbox_client_id: client
+
+  # Image and tag to use
+coda_stats_api_image_name: coda19/coda19-stats-api
+coda_stats_api_image_tag: latest
+
+################################################################################
+#### CODA-LEARNING-API
+################################################################################
+
+# Listening port (TCP)
+coda_learning_api_port: 5445
+
+# Environnement variables
+coda_learning_api_aidbox_client_id: client
+
+  # Image and tag to use
+coda_learning_api_image_name: coda19/coda19-learning-api
+coda_learning_api_image_tag: latest
+
+################################################################################
+#### General and common stuff
+################################################################################
+
+# Systemd stuff
+coda_green_systemd_temp_dir: "{{ '/tmp' if ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 7 else '%T' }}"
+coda_green_systemd_timeout_start_sec: 120
+coda_green_systemd_restart_sec: 15
+
+# Podman stuff
+coda_green_container_stop_timeout: 5
+coda_green_container_cidfile: "{{ coda_green_systemd_temp_dir }}/%n-cid"
+coda_green_container_pidfile: "{{ coda_green_systemd_temp_dir }}/%n-pid"

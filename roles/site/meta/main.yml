@@ -8,3 +8,4 @@ dependencies:
   - role: coda_fhirbase
   - role: coda_orthanc
   - role: coda_redis
+  - role: coda_apis

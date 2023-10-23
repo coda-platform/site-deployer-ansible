@@ -29,7 +29,7 @@ CODA_CURL_MAX_TIME={{ _common_curl_max_time }}
 # Script specifics
 
 PULL_BASE={{ _common_ansible_pull_directory }}
-ANSIBLE_BASE=${PULL_BASE}/ansible
+ANSIBLE_BASE=${PULL_BASE}
 ANSIBLE_LOG_DIR={{ _common_ansible_pull_log_dir }}
 
 # ANSIBLE_ROLES_PATH must be exported to be visible by ansible-pull command
@@ -59,7 +59,6 @@ chmod go-rwx ${ANSIBLE_LOG_DIR}
   # Fire!
   ansible-pull \
     --url {{ _common_ansible_pull_repo_url }} \
-    #--checkout {{ _common_ansible_pull_repo_branch[coda_host_role] | default("master") }} \ #Il n'y a plus de host role donc on doit avoir a changer l'adresse aussi
     --vault-password-file /etc/ansible/vault.pass \
     --directory ${PULL_BASE} \
     --inventory ${ANSIBLE_BASE}/hosts.localhost \
