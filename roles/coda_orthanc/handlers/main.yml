@@ -1,6 +1,0 @@
----
-
-- name: restart orthanc
-  systemd:
-    name: orthanc
-    state: restarted

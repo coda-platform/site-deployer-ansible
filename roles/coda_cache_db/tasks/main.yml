@@ -1,0 +1,13 @@
+---
+
+- name: "IMPORT_TASKS | firewall.yml"
+  import_tasks: firewall.yml
+  tags:
+    - coda_redis
+    - coda_redis_firewall
+
+- name: "IMPORT_TASKS | install.yml"
+  import_tasks: install.yml
+  tags:
+    - coda_redis
+    - coda_redis_install 
