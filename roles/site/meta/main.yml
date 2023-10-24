@@ -5,7 +5,6 @@ dependencies:
   - role: coda_podman
   - role: coda_object_store
   - role: coda_fhir_store
-  - role: coda_fhirbase
   - role: coda_dicom_store
   - role: coda_cache_db
   - role: coda_apis
