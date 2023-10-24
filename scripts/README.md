@@ -3,7 +3,7 @@
 
 #Vagrant local use for development/testing
 #In order to run the bootstrap script in vagrant uncomment the following lines in /vagrant/scripts/bootstrap.sh script before running
-
+```
 ####################################################################################################################
 export CODA_USE_VAGRANT=true
 
@@ -20,12 +20,12 @@ echo "${BOLD}${YELLOW}*** Cloning deployment scripts ***${NORMAL}"
    git clone https://github.com/coda-platform/site-deployer-ansible.git ${CODA_BASE_DIR}/deploy-scripts-pull/
  fi
 #####################################################################################################################
-
+```
 #After uncommenting run the bootstrap script and answer questions
-bash /vagrant/scripts/bootstrap.sh
+`bash /vagrant/scripts/bootstrap.sh`
 
 ###Activate environment
-source /opt/coda/venv-ansible/bin/activate
+`source /opt/coda/venv-ansible/bin/activate`
 
 ###Run playbook
-ansible-playbook playbooks/localhost.yml
+`ansible-playbook playbooks/localhost.yml`
