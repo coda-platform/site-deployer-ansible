@@ -4,7 +4,7 @@
     name:
       - lvm2
       - sg3_utils
-      - system-storage-manager # utilitaire ssm (ssm list)
+#      - system-storage-manager # utilitaire ssm (ssm list)
     state: present
 
 - name: COMMAND | sg_scan - Scan des SCSI devices

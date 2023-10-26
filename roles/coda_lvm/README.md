@@ -4,7 +4,7 @@ coda_lvm
 
 Ce role permet de gérer les différentes composantes de stockage (PVs, VGs, LVs, FSs, mounts, ...) à l'aide du Logical Volume Manager (LVM).
 
-Outre l'installation des dépendances, l'inclusion de ce rôle n'effectue rien s'il n'est pas activé explicitement à l'aide de la variable ul_lvm_enabled ne retourne pas _vrai_.
+Outre l'installation des dépendances, l'inclusion de ce rôle n'effectue rien s'il n'est pas activé explicitement à l'aide de la variable coda_lvm_enabled ne retourne pas _vrai_.
 
 Le rôle permet:
 - la détection de nouveaux bus/devices/disks SCSI
