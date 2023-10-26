@@ -1,6 +1,6 @@
 ---
 
-coda19_site_id: 101
+coda_site_id: 101
 
 # Overrides of Ansible code branches/tags to be used:
 _common_ansible_pull_repo_branch:
