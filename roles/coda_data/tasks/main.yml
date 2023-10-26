@@ -2,10 +2,10 @@
 
  - block:
 
-#     - name: "FAIL | CHECK BLOCK DEVICES REQUIREMENTS"
-#       fail:
-#         msg: "FAIL: YOU MUST HAVE ENOUGH BLOCK DEVICES TO CONTINUE, FOUND: {{ ansible_devices.keys() | length | int }} NEEDED: {{ _data_min_block_devices }}"
-#       when: ansible_devices.keys() | length | int < _data_min_block_devices
+     - name: "FAIL | CHECK BLOCK DEVICES REQUIREMENTS"
+       fail:
+         msg: "FAIL: YOU MUST HAVE ENOUGH BLOCK DEVICES TO CONTINUE, FOUND: {{ ansible_devices.keys() | length | int }} NEEDED: {{ _data_min_block_devices }}"
+       when: ansible_devices.keys() | length | int < _data_min_block_devices
 
 #     # We need to dynamically configure LVM here and it can't be done at group_vars level.
 #     # Simply because we refer to an ansible_device at index 1, that maybe is not existing at parse time.
