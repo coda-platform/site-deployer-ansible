@@ -1,0 +1,6 @@
+---
+
+coda19_site_id: 102
+
+#  Disables the automated ansible-pull
+_common_ansible_pull_disabled: yes
