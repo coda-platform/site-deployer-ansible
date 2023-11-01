@@ -1,71 +1,49 @@
-# Ansible scripts for site node deployment
+# deploy-scripts
 
-## Local Python virtual environment
+Deployment scripts for the different CODA components.
 
-**Create virtual environement**
+## Bootstrap
 
-```
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
+All below steps must be run as «root» by using `sudo su -`.
 
-**Reset virtual environment**
+### Install package dependencies
 
-```
-deactivate
-rm -rf .venv
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.in
-pip freeze > requirements.txt
+Ensure `curl` is installed:
+
+```bash
+yum install -y curl
 ```
 
-## Setup Vagrant
+### Export proxy
 
-**Mac OS X**
+If current host doesn't have direct internet access and needs to use a proxy, simply
+adjust PROXY variable and export:
 
-Install Vagrant:
+```bash
+export PROXY=http://<hostname>:<port>
 
-- First, install Vagrant: `brew install vagrant`
-- Second, install a box provider. On Mac, VirtualBox is easiest. For Apple Silicon (M1/M2), must use the [latest development build](https://www.virtualbox.org/wiki/Testbuilds) - use the build called `macOS/ARM64 BETA`
-
-## Setup Firewall
-
-**Fedora**
-
-With Fedora, NFS and Squid services will work only after doing this:
-```
-firewall-cmd --permanent --zone=libvirt --add-service=nfs
-firewall-cmd --permanent --zone=libvirt --add-service=squid
-firewall-cmd --reload
+export HTTP_PROXY=${PROXY}
+export HTTPS_PROXY=${PROXY}
+export http_proxy=${PROXY}
+export https_proxy=${PROXY}
 ```
 
-## Launch Vagrant
+Also, ensure that the following URL is whitelisted in your proxy server:
+-  https://license.aidbox.app
 
-Start and provision:
-```
-vagrant up
-```
+### Bootstrapping
 
-SSH to virtual machine:
-```
-vagrant ssh
-```
+Download the bootstrap script and execute it:
 
-Destroy virtual machine:
-```
-vagrant destroy
+```bash
+curl -s https://raw.githubusercontent.com/coda-platform/site-deployer-ansible/main/scripts/bootstrap.sh \
+     -o bootstrap.sh
+
+bash bootstrap.sh
 ```
 
-## Launch Ansible
+At the end, you'll be asked a few questions necessary to complete the bootstrap process:
 
-Launch playbook from this directory:
-
-```
-export ANSIBLE_CONFIG=ansible.vagrant.cfg
-ansible-playbook -i site-deployment-vm, playbooks/vagrant.yml
-```
-
+- Your SITE ID, provided by CODA
+- Your VAULT PASSWORD, provided by CODA
+- Proxy server, only if needed for bootstrapping process.
