@@ -1,0 +1,9 @@
+---
+#Task to setup ssh autologout on idle session after given duration.
+
+- name: COPY | set autologout
+  copy:
+    dest: /etc/profile.d/autologout.sh
+    mode: 0644
+    content: |
+      declare -xr TMOUT=600
