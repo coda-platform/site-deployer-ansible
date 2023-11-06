@@ -56,12 +56,6 @@
     - _common
     - _common_sshd
 
-- name: "IMPORT_TASKS | autologout.yml"
-  import_tasks: autologout.yml
-  tags:
-    - _common
-    - _common_autologout
-
 - name: "IMPORT_TASKS | fail2ban.yml"
   import_tasks: fail2ban.yml
   tags:
