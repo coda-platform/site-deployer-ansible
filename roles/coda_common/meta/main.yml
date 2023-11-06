@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: coda_stig
+    when: _common_enable_stig     | default(true)
+  - role: coda_aide
+    when: _common_enable_aide     | default(true)
