@@ -26,27 +26,24 @@
 #
 # FIXME: use rpm installation instead of binary distribution trough this git repo, this will need refactor + data migration
 
+- name: "GET URI | GET MINIO CHECKSUM"
+  uri:
+    url: https://dl.min.io/server/minio/release/linux-amd64/archive/{{ coda_minio_server_version }}.sha256sum
+    return_content: true
+  register: url_sha256
+    
+- name: "Set URL_CHECKSUM"
+  set_fact:
+    minio_checksum: "{{ url_sha256.content.split(' ')[0] }}" 
+  
 - name: "GET_URL | Download MINIO server"
   get_url:
-    #url: https://dl.min.io/server/minio/release/linux-amd64/minio
-    url: https://dl.min.io/server/minio/release/linux-amd64/archive/minio.RELEASE.2023-10-25T06-33-25Z
+    url: https://dl.min.io/server/minio/release/linux-amd64/archive/{{ coda_minio_server_version }}
+    checksum: "sha256:{{ minio_checksum }}"
     dest: /usr/local/bin/minio
     mode: 0755
     timeout: 30
   notify: restart minio
-
-#- file:
-#    path: /usr/local/bin/minio
-#    state: absent
-
-#- name: COPY | /usr/local/bin/minio
-#  copy:
-#    src: files/minio
-#    dest: /usr/local/bin/minio
-#    owner: root
-#    group: root
-#    mode: 0755
-#  notify: restart minio
 
 - name: "TEMPLATE | Generate config - /etc/default/minio"
   template:
