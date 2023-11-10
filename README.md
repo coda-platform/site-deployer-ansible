@@ -28,8 +28,8 @@ export http_proxy=${PROXY}
 export https_proxy=${PROXY}
 ```
 
-Also, ensure that the following URL is whitelisted in your proxy server:
--  https://license.aidbox.app
+Also, ensure that the following URLs are whitelisted in your proxy server:
+-  https://aidbox.app
 
 ### Bootstrapping
 
