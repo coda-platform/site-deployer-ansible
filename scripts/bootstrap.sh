@@ -66,29 +66,6 @@ dnf install -y curl \
                util-linux \
                nano
 
-
-
-################################################################################
-#### ADD DEPLOYMENT USER
-################################################################################
-
-echo "${BOLD}${YELLOW}*** CREATING DEPLOYMENT USER ***${NORMAL}"
-
-userdel --remove coda-deployment 2>/dev/null
-useradd coda-deployment --groups wheel --password '$6$mayq9jenCSAnecbp$z64XGUJG3e9Gyh8rC6HIAS62ykwr4Tv0glAC1zjVVhq73S3bulIQXNuwRFc8QL.C3pUn2OOtKjComEViWGPLJ/' 2>/dev/null
-
-# CREATE .SSH FOLDER AND PUBLIC KEY
-
-mkdir -p ~coda-deployment/.ssh
-curl -so ~coda-deployment/.ssh/authorized_keys ${CODA_DEPLOYMENT_USER_PUB_KEY_URL}
-
-# SET OWNERSHIP AND PRIVILEGES
-
-chown -R coda-deployment:coda-deployment ~coda-deployment/.ssh
-
-chmod 0700 ~coda-deployment/.ssh
-chmod 0644 ~coda-deployment/.ssh/authorized_keys
-
 ################################################################################
 #### CLONE LOCALLY
 ################################################################################
