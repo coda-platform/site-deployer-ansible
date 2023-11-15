@@ -22,16 +22,11 @@ CODA_USE_VAGRANT=${CODA_USE_VAGRANT:-false}
 CODA_ANSIBLE_VENV_REQUIREMENTS_FILE=/vagrant/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_FILE=/vagrant/playbooks/misc/bootstrap.yml
 
-
 # ANSIBLE VENV REQUIREMENTS FILE
 
 CODA_ANSIBLE_BASE_URL=https://raw.githubusercontent.com/coda-platform/site-deployer-ansible/main
 CODA_ANSIBLE_VENV_REQUIREMENTS_URL=${CODA_ANSIBLE_BASE_URL}/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_URL=${CODA_ANSIBLE_BASE_URL}/playbooks/misc/bootstrap.yml
-
-# DEPLOYMENT USER PUBLIC KEY URL
-
-CODA_DEPLOYMENT_USER_PUB_KEY_URL=https://raw.githubusercontent.com/CODA-19/deploy-scripts/master/ansible/keys/id_rsa.deployment.pub
 
 #### DEFINE COLORS
 
