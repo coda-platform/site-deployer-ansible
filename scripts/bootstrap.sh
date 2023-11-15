@@ -22,16 +22,11 @@ CODA_USE_VAGRANT=${CODA_USE_VAGRANT:-false}
 CODA_ANSIBLE_VENV_REQUIREMENTS_FILE=/vagrant/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_FILE=/vagrant/playbooks/misc/bootstrap.yml
 
-
 # ANSIBLE VENV REQUIREMENTS FILE
 
 CODA_ANSIBLE_BASE_URL=https://raw.githubusercontent.com/coda-platform/site-deployer-ansible/main
 CODA_ANSIBLE_VENV_REQUIREMENTS_URL=${CODA_ANSIBLE_BASE_URL}/requirements.txt
 CODA_ANSIBLE_BOOTSTRAP_PLAYBOOK_URL=${CODA_ANSIBLE_BASE_URL}/playbooks/misc/bootstrap.yml
-
-# DEPLOYMENT USER PUBLIC KEY URL
-
-CODA_DEPLOYMENT_USER_PUB_KEY_URL=https://raw.githubusercontent.com/CODA-19/deploy-scripts/master/ansible/keys/id_rsa.deployment.pub
 
 #### DEFINE COLORS
 
@@ -65,29 +60,6 @@ dnf install -y curl \
                libselinux-python3 \
                util-linux \
                nano
-
-
-
-################################################################################
-#### ADD DEPLOYMENT USER
-################################################################################
-
-echo "${BOLD}${YELLOW}*** CREATING DEPLOYMENT USER ***${NORMAL}"
-
-userdel --remove coda-deployment 2>/dev/null
-useradd coda-deployment --groups wheel --password '$6$mayq9jenCSAnecbp$z64XGUJG3e9Gyh8rC6HIAS62ykwr4Tv0glAC1zjVVhq73S3bulIQXNuwRFc8QL.C3pUn2OOtKjComEViWGPLJ/' 2>/dev/null
-
-# CREATE .SSH FOLDER AND PUBLIC KEY
-
-mkdir -p ~coda-deployment/.ssh
-curl -so ~coda-deployment/.ssh/authorized_keys ${CODA_DEPLOYMENT_USER_PUB_KEY_URL}
-
-# SET OWNERSHIP AND PRIVILEGES
-
-chown -R coda-deployment:coda-deployment ~coda-deployment/.ssh
-
-chmod 0700 ~coda-deployment/.ssh
-chmod 0644 ~coda-deployment/.ssh/authorized_keys
 
 ################################################################################
 #### CLONE LOCALLY
