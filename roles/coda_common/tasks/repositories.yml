@@ -11,7 +11,7 @@
     content: |
       [epel]
       name=Extra Packages for Enterprise Linux $releasever - $basearch
-      baseurl=http://fedora-epel.mirror.iweb.ca/$releasever/Everything/$basearch
+      baseurl=https://dl.fedoraproject.org/pub/epel/$releasever/Everything/$basearch
       failovermethod=priority
       enabled=1
       gpgcheck=1
