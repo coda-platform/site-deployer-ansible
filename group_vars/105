@@ -1,0 +1,26 @@
+---
+
+coda_site_id: 105
+
+# Image and tag to use
+coda_site_api_image_name: coda19/coda19-site-api
+coda_site_api_image_tag: dev
+
+################################################################################
+#### CODA-STATS-API
+################################################################################
+
+# Image and tag to use
+coda_stats_api_image_name: coda19/coda19-stats-api
+coda_stats_api_image_tag: dev
+
+################################################################################
+#### CODA-LEARNING-API
+################################################################################
+
+# Environnement variables
+coda_learning_api_aidbox_client_id: client
+
+# Image and tag to use
+coda_learning_api_image_name: coda19/coda19-learning-api
+coda_learning_api_image_tag: dev
