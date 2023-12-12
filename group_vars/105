@@ -1,6 +1,13 @@
 ---
 
 coda_site_id: 105
+#_data_enabled: no
+
+################################################################################
+#### CODA-SITE-API
+################################################################################
+# Keycloak domain
+coda_site_api_keycloak_realm: coda19-dv
 
 # Image and tag to use
 coda_site_api_image_name: coda19/coda19-site-api
