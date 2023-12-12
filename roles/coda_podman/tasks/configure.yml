@@ -21,3 +21,18 @@
     name: user.max_user_namespaces
     value: "{{ coda_podman_max_user_namespaces }}"
     state: present
+
+#This options is to use cgroupfs instead of systemd. 
+- name: "LINEINFILE | Edit containers.conf file cgroup_manager to cgroupfs"
+  lineinfile:
+    path: /usr/share/containers/containers.conf
+    regexp: '#cgroup_manager = "systemd"'
+    line: 'cgroup_manager = "cgroupfs"'
+
+#This option is to prevent error from containers when too many subuid are used
+- name: "LINEINFILE | Edit storage.conf file to ignore chown errors"
+  lineinfile:
+    path: /etc/containers/storage.conf
+    regexp: '#ignore_chown_errors = "false"'
+    line: 'ignore_chown_errors = "true"'
+

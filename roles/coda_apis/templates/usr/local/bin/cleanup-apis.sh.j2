@@ -14,6 +14,7 @@ kill -15 $PID 2>/dev/null
 sleep 5
 kill -9 $PID  2>/dev/null
 podman rmi --force docker.io/coda/coda-learning-api:latest
+podman rmi --force docker.io/coda/coda-learning-api:dev
 podman system prune --all --force && podman rmi --all
 EOF
 echo "=== coda-learning-api cleanup finished ==="
@@ -29,6 +30,7 @@ kill -15 $PID 2>/dev/null
 sleep 5
 kill -9 $PID  2>/dev/null
 podman rmi --force docker.io/coda/coda-stats-api:latest
+podman rmi --force docker.io/coda/coda-stats-api:dev
 podman system prune --all --force && podman rmi --all
 EOF
 echo "=== coda-stats-api cleanup finished ==="
@@ -44,6 +46,7 @@ kill -15 $PID 2>/dev/null
 sleep 5
 kill -9 $PID  2>/dev/null
 podman rmi --force docker.io/coda/coda-site-api:latest
+podman rmi --force docker.io/coda/coda-site-api:dev
 podman system prune --all --force && podman rmi --all
 EOF
 echo "=== coda-site-api cleanup finished ==="

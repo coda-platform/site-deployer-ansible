@@ -71,3 +71,10 @@ coda_aidbox_firewalld_zones:
 coda_redis_firewalld_zones:
   - zone: local-green
     state: enabled
+
+################################################################################
+###### CODA_ORTHANC
+################################################################################
+
+coda_orthanc_group: orthanc
+coda_orthanc_user: orthanc
