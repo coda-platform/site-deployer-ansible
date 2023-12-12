@@ -23,6 +23,9 @@ coda_site_api_keycloak_client_id: coda19-site
 coda_site_api_stats_api_endpoint: http://localhost:5427
 coda_site_api_learning_api_endpoint: http://localhost:5445
 
+coda_site_api_keycloak_url: https://auth.hub.coda19.com/auth
+coda_site_api_keycloak_realm: coda19-pr
+
 # Image and tag to use
 coda_site_api_image_name: coda19/coda19-site-api
 coda_site_api_image_tag: latest

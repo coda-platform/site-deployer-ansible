@@ -7,3 +7,20 @@ CODA19_LEARNING_API_REDIS_PORT=6379
 CODA19_LEARNING_API_AIDBOX_URL={{ coda_stats_api_aidbox_url }}
 CODA19_LEARNING_API_CLIENT_ID={{ coda_learning_api_aidbox_client_id }}
 CODA19_LEARNING_API_CLIENT_SECRET={{ coda_aidbox_conf_client_secret | default('') }}
+
+
+CODA_LEARNING_API_PORT={{ coda_learning_api_port }}
+#CODA_LEARNING_API_IS_LOCAL_DEV=true
+
+CODA_FHIR_STORE_URL={{ coda_stats_api_aidbox_url }}
+CODA_LEARNING_API_FHIR_STORE_CLIENT_ID={{ coda_learning_api_aidbox_client_id }}
+CODA_LEARNING_API_FHIR_STORE_CLIENT_SECRET={{ coda_aidbox_conf_client_secret | default('') }}
+
+CODA_SITE_CACHE_DB_HOST=localhost
+CODA_SITE_CACHE_DB_PORT=6379
+#CODA_SITE_CACHE_DB_USERNAME=''
+#CODA_SITE_CACHE_DB_PASSWORD=''
+
+CODA_DICOM_STORE_URL=http://localhost:8042
+CODA_LEARNING_API_DICOM_STORE_CLIENT_ID= {{ coda_orthanc_user }}
+CODA_LEARNING_API_DICOM_STORE_CLIENT_SECRET={{ coda_orthanc_password }}
