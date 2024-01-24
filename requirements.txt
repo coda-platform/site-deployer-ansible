@@ -3,7 +3,7 @@ ansible-core==2.15.5
 cffi==1.15.1
 cryptography==41.0.7
 dnspython==2.3.0
-Jinja2==3.1.2
+Jinja2==3.1.3
 jmespath==1.0.1
 MarkupSafe==2.1.2
 netaddr==0.8.0
