@@ -39,15 +39,15 @@
              #     We assume that all devices are all of same type (sda,sdb; vda,vdb).
              - "{{ (coda_default_data_disk=='') | ternary(coda_second_disk,coda_default_data_disk) }}"
 
-             create: true
+           create: true
 
-             lvnames:
-               - lvname: LVData
-                 size: +100%FREE
-                 create: true
-                 filesystem: xfs
-                 mount: true
-                 mount_point: /data
+           lvnames:
+             - lvname: LVData
+               size: +100%FREE
+               create: true
+               filesystem: xfs
+               mount: true
+               mount_point: /data
 
    when: _data_enabled
    tags:
