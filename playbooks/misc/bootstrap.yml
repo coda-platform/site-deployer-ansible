@@ -14,7 +14,7 @@
     vault_pass_file: /etc/ansible/vault.pass
   vars_prompt:
 
-    - prompt: "Enter your site ID (110-120)"
+    - prompt: "Enter your site ID (110-121)"
       name: _prompt_site_id
       default: "{{ lookup('ini', 'id section=site file=' + facts_file, errors='ignore') }}"
       private: no

@@ -16,23 +16,38 @@
          name: coda_lvm
        vars:
          coda_lvm_enabled: yes
-         coda_lvm_groups:
-           - vgname: VGData
-             disks:
-               # Find which block device to use for /data partition:
-               #   - If _data_block_device is defined, use it;
-               #   - If not, simply use the second device.
-               #     We assume that all devices are all of same type (sda,sdb; vda,vdb).
-               - "{{ _data_block_device | default('/dev/' + ( ansible_devices.keys() | select('match','^[vs]d') | list | sort )[1]) }}"
-             create: true
 
-             lvnames:
-               - lvname: LVData
-                 size: +100%FREE
-                 create: true
-                 filesystem: xfs
-                 mount: true
-                 mount_point: /data
+         _data_block_device_hc:
+           "{{ _data_block_device | default('') }}"
+
+         coda_previous_data_installation_disk:
+           "{{ (ansible_lvm.pvs | dict2items | selectattr('value.vg','match','VGData') | list | items2dict).keys()|join('')}}"
+
+         coda_second_disk:
+           "{{  '/dev/' + ((ansible_devices.keys() | select('match','^[vs]d') | list | sort )[1]) | join ('') }}"
+
+         coda_default_data_disk:
+           "{{ (coda_previous_data_installation_disk=='') | ternary(_data_block_device_hc,coda_previous_data_installation_disk) }}"
+
+         coda_lvm_groups:
+         - vgname: VGData
+           disks:
+             # Find which block device to use for /data partition:
+             #   - If disk was previously setup use it. #This was added because of issue with Rocky Linux 9 and vmware which might switch /sdb to /sda
+             #   - If _data_block_device is defined, use it;
+             #   - If not, simply use the second device.
+             #     We assume that all devices are all of same type (sda,sdb; vda,vdb).
+             - "{{ (coda_default_data_disk=='') | ternary(coda_second_disk,coda_default_data_disk) }}"
+
+           create: true
+
+           lvnames:
+             - lvname: LVData
+               size: +100%FREE
+               create: true
+               filesystem: xfs
+               mount: true
+               mount_point: /data
 
    when: _data_enabled
    tags:

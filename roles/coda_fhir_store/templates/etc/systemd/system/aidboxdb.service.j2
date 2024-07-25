@@ -32,6 +32,7 @@ ExecStart=/usr/bin/podman run --name aidboxdb \
   --publish 5432:5432 \
   --volume /data/aidboxdb:/data:z \
   --volume /tmp/%n.tmp:/tmp:z \
+  --shm-size 1g \
   --rm --detach \
   {{ coda_aidbox_db_image_registry }}/{{ coda_aidbox_db_image_name }}:{{ coda_aidbox_db_image_tag }}
 

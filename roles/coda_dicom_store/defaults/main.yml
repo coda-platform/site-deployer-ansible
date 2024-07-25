@@ -7,7 +7,7 @@ coda_orthanc_firewalld_zones:
     state: enabled
 
 coda_orthanc_image_repo: docker.io
-coda_orthanc_image_name: osimis/orthanc
+coda_orthanc_image_name: orthancteam/orthanc
 coda_orthanc_image_tag: 22.7.0
 
 coda_orthanc_image_remote_check_hours: [ 0 ]
