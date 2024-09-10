@@ -1,3 +1,6 @@
 ---
 
 coda_site_id: 110
+
+# Aidbox FHIR version
+coda_aidbox_fhir_version: 5.0.0
